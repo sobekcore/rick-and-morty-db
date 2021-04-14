@@ -1,12 +1,11 @@
 <template>
   <div class="hello">
-    <h2>{{ msg }}</h2>
-    <button @click="clickMethod">Test method response</button>
     <ul>
       <li v-for="character in characters" :key="character.id">
         {{ character.name }}
       </li>
     </ul>
+    Page: {{ page }}
   </div>
 </template>
 
@@ -21,23 +20,18 @@ import { useQuery, useResult } from "@vue/apollo-composable";
 import charactersQuery from "../graphql/characters.query.gql";
 
 export default defineComponent({
-  name: "Intro",
+  name: "Characters",
   props: {
-    msg: String,
-  },
-  methods: {
-    clickMethod() {
-      //console.log(this.characters);
+    page: {
+      type: Number,
+      required: true,
+      default: 1,
     },
   },
-  // data() {
-  //   return {
-  //     characters: [],
-  //   };
-  // },
-  setup() {
-    const { result } = useQuery(charactersQuery, { page: 1 });
+  setup(props) {
+    const { result } = useQuery(charactersQuery, { page: props.page });
     const characters = useResult(result, null, (data) => data.characters.results);
+
     return { characters };
   },
 });
@@ -47,16 +41,6 @@ export default defineComponent({
 h2 {
   margin: 20px 0 0;
   font-size: 26px;
-}
-
-button {
-  padding: 4px 10px;
-  margin: 40px 0;
-  background: darksalmon;
-  border: 2px solid black;
-  border-radius: 8px;
-  outline: none;
-  cursor: pointer;
 }
 
 ul {

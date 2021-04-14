@@ -6,7 +6,7 @@ import { DefaultApolloClient } from "@vue/apollo-composable";
 import { VueWrapper } from "@vue/test-utils";
 import VueApollo from "vue-apollo";
 
-const apolloClient = new ApolloClient({
+export const apolloClient = new ApolloClient({
   uri: "https://rickandmortyapi.com/graphql",
   cache: new InMemoryCache(),
 });

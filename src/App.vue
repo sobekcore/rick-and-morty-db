@@ -1,16 +1,18 @@
 <template>
-  <h1>Hello World!</h1>
-  <Intro msg="Welcome from an introduction component." />
+  <h1>Rick <span>&#38;</span> Morty Database</h1>
+  <div v-for="index in 34" :key="index">
+    <Characters v-bind:page="index" />
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import Intro from "./components/intro.vue";
+import Characters from "./components/characters.vue";
 
 export default defineComponent({
   name: "App",
   components: {
-    Intro,
+    Characters,
   },
 });
 </script>
