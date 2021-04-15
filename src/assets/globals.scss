@@ -17,10 +17,15 @@ body {
   padding: 0;
 }
 
+#app {
+  font-family: sans-serif;
+}
+
 img {
   user-select: none;
 }
 
-#app {
-  font-family: sans-serif;
+::selection {
+  background-color: $blue-400;
+  color: white;
 }

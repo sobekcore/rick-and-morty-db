@@ -1,8 +1,14 @@
 query charactersQuery($page: Int!, $filter: String) {
   characters(filter: { name: $filter }, page: $page) {
     results {
-      name
+      image
       id
+      name
+      gender
+      species
+      episode {
+        episode
+      }
     }
   }
 }

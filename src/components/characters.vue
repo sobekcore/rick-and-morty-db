@@ -1,8 +1,16 @@
 <template>
   <section>
-    <ul>
-      <li v-for="character in characters" :key="character.id">
-        {{ character.name }}
+    <ul class="char-list">
+      <li class="char-item" v-for="character in characters" :key="character.id">
+        <ul class="info-list">
+          <li class="info-item"><img id="photo" :src="character.image" /></li>
+          <li class="info-item">{{ character.id }}</li>
+          <li class="info-item">{{ character.name }}</li>
+          <li class="info-item">{{ character.gender }}</li>
+          <li class="info-item">{{ character.species }}</li>
+          <li class="info-item">{{ character.episode[character.episode.length - 1].episode }}</li>
+          <li class="info-item"><img id="favorite" src="../assets/favorite.svg" /></li>
+        </ul>
       </li>
     </ul>
   </section>
@@ -48,19 +56,45 @@ section {
     font-size: 26px;
   }
 
-  ul {
+  .char-list {
     display: grid;
     grid-template-columns: 1fr;
     list-style-type: none;
     padding: 0;
     margin: 0;
 
-    li {
-      background: $blue-400;
+    .char-item {
       color: black;
-      padding: 10px 12px;
+      padding: 4px 0px;
       border-radius: 4px;
+      border-bottom: 2px solid $gray-100;
       margin: 3px 5px;
+
+      .info-list {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        font: 18px "Poppins", sans-serif;
+        color: $gray-200;
+        list-style-type: none;
+        align-items: center;
+        text-align: center;
+        padding: 0;
+
+        .info-item {
+          #photo {
+            height: 80px;
+            border-radius: 10px;
+          }
+
+          #favorite {
+            height: 46px;
+            padding: 10px;
+            border: 2px solid $blue-400;
+            border-radius: 8px;
+            cursor: pointer;
+          }
+        }
+      }
     }
   }
 }
