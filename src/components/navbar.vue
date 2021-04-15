@@ -9,10 +9,17 @@
       />
     </a>
     <section>
-      <input id="url" placeholder="Start typing to search..." v-on:keyup.enter="goToUrl()" />
+      <input
+        id="url"
+        :value="searchFilterClean"
+        placeholder="Search for characters..."
+        v-on:keyup.enter="goToUrl()"
+      />
       <img id="search" title="Search" src="../assets/search.svg" @click="goToUrl()" />
     </section>
-    <p>Currently there are {{ count }} characters to choose from.</p>
+    <p>
+      Currently there are <span>{{ count }}</span> characters to choose from.
+    </p>
   </nav>
 </template>
 
@@ -33,6 +40,13 @@ export default defineComponent({
       var url = document.getElementById("url").value;
       window.location.search = "=" + url;
     },
+  },
+  setup() {
+    // Using clean search filter again to replace placeholder
+    var searchFilter = window.location.search.substr(2);
+    var searchFilterClean = searchFilter.replaceAll("%20", " ");
+
+    return { searchFilterClean };
   },
 });
 </script>
@@ -97,15 +111,36 @@ nav {
     color: $gray-200;
     font-weight: 500;
     margin: auto 0;
-    padding: 30px;
+    padding: 40px 70px;
+
+    span {
+      color: $blue-400;
+    }
   }
 
-  @media (max-width: 1219px) {
+  @media (max-width: 1319px) {
     grid-template-columns: 1fr;
     height: auto;
 
-    #logo {
-      margin: 30px auto;
+    a {
+      #logo {
+        margin: 30px auto;
+      }
+    }
+
+    section {
+      margin: 0 15vw;
+    }
+  }
+
+  @media (max-width: $mobile-breakpoint) {
+    section {
+      margin: 0 20px;
+    }
+
+    p {
+      padding: 40px 20px;
+      font-size: 19px;
     }
   }
 }

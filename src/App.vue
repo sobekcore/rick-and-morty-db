@@ -1,12 +1,16 @@
 <template>
-  <div v-if="information !== null">
-    <Navbar v-bind:count="information.count" />
+  <article v-if="information !== null">
+    <Navbar :count="information.count" />
     <!-- Navchar is a 2nd navbar + character info keys -->
     <Navchar />
     <div v-for="index in information.pages" :key="index">
-      <Characters v-bind:page="index" />
+      <Suspense>
+        <template #default>
+          <Characters :page="index" />
+        </template>
+      </Suspense>
     </div>
-  </div>
+  </article>
 </template>
 
 <script lang="ts">
@@ -30,10 +34,12 @@ export default defineComponent({
     Navchar,
   },
   setup() {
+    var loaded = false;
+    setTimeout(() => (loaded = true), 2000);
     const { result } = useQuery(informationQuery);
     const information = useResult(result, null, (data) => data.characters.info);
 
-    return { information };
+    return { loaded, information };
   },
 });
 </script>

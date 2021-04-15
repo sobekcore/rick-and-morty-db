@@ -36,6 +36,7 @@ section {
 
   #navchar-list {
     display: flex;
+    padding: 0;
 
     li {
       margin: 7px 21px;
@@ -51,8 +52,23 @@ section {
     text-align: center;
     padding: 12px 0;
     margin: 0;
+  }
 
-    // @media (max-width: 1099px) {}
+  @media (max-width: $mobile-breakpoint) {
+    #navchar-list {
+      justify-content: space-around;
+      border-bottom: 2px solid $gray-100;
+      padding-bottom: 21px;
+      margin-bottom: 0;
+
+      li {
+        margin: 7px 0;
+      }
+    }
+
+    #keys-list {
+      display: none;
+    }
   }
 }
 </style>

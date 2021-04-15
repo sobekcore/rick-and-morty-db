@@ -1,10 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap");
 
 // Global Sass Variables
 $gray-200: #a9b1bd;
 $gray-100: #e5eaf4;
 
 $blue-400: #11b0c8;
+
+$mobile-breakpoint: 699px;
 
 * {
   box-sizing: border-box;
@@ -21,11 +23,24 @@ body {
   font-family: sans-serif;
 }
 
-img {
-  user-select: none;
-}
-
 ::selection {
   background-color: $blue-400;
   color: white;
+}
+
+body::-webkit-scrollbar {
+  width: 12px;
+}
+
+body::-webkit-scrollbar-track {
+  background: $gray-100;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: $blue-400;
+  border-radius: 22px 0 0 22px;
+}
+
+img {
+  user-select: none;
 }

@@ -3,13 +3,22 @@
     <ul class="char-list">
       <li class="char-item" v-for="character in characters" :key="character.id">
         <ul class="info-list">
-          <li class="info-item"><img id="photo" :src="character.image" /></li>
-          <li class="info-item">{{ character.id }}</li>
-          <li class="info-item">{{ character.name }}</li>
+          <li class="info-item"><img alt="Character Image" id="photo" :src="character.image" /></li>
+          <li class="info-item id">{{ character.id }}</li>
+          <li class="info-item name">{{ character.name }}</li>
           <li class="info-item">{{ character.gender }}</li>
           <li class="info-item">{{ character.species }}</li>
-          <li class="info-item">{{ character.episode[character.episode.length - 1].episode }}</li>
-          <li class="info-item"><img id="favorite" src="../assets/favorite.svg" /></li>
+          <li class="info-item episode">
+            {{ character.episode[character.episode.length - 1].episode }}
+          </li>
+          <li class="info-item favorite">
+            <img
+              title="Add to favorites"
+              role="button"
+              id="favorite"
+              src="../assets/favorite.svg"
+            />
+          </li>
         </ul>
       </li>
     </ul>
@@ -35,7 +44,7 @@ export default defineComponent({
       default: 1,
     },
   },
-  setup(props) {
+  async setup(props) {
     // Get current url search filter after ?="", and
     // clean it up by removing spacebar url encoding
     var searchFilter = window.location.search.substr(2);
@@ -92,6 +101,44 @@ section {
             border: 2px solid $blue-400;
             border-radius: 8px;
             cursor: pointer;
+          }
+        }
+      }
+
+      @media (max-width: $mobile-breakpoint) {
+        margin: 0;
+        padding: 12px 0;
+
+        .info-list {
+          grid-template-columns: 1fr;
+
+          .info-item.id::before {
+            content: "#";
+          }
+
+          .info-item.id {
+            grid-row: 2 span / 3;
+            font-size: 23px;
+            margin-left: 12px;
+            display: flex;
+            width: auto;
+          }
+
+          .info-item.name {
+            grid-row: 1 span / 4;
+            margin: -33px 80px 10px 80px;
+            font-size: 21px;
+            word-wrap: break-word;
+          }
+
+          .info-item.episode::before {
+            content: "Last episode: ";
+          }
+
+          .info-item.favorite::before {
+            content: "Favorite?";
+            display: block;
+            margin-top: 10px;
           }
         }
       }
