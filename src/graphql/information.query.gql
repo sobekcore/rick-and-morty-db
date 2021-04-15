@@ -1,0 +1,8 @@
+query informationQuery {
+  characters {
+    info {
+      pages
+      count
+    }
+  }
+}

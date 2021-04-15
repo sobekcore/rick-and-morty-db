@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+// Global Sass Variables
+$gray-200: #a9b1bd;
+$gray-100: #e5eaf4;
+
+$blue-400: #11b0c8;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+img {
+  user-select: none;
+}
+
+#app {
+  font-family: sans-serif;
+}

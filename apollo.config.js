@@ -4,6 +4,6 @@ module.exports = {
       name: "rick-and-morty-api",
       url: "https://rickandmortyapi.com/graphql",
     },
-    includes: ["src/**/*.vue"],
+    includes: ["src/**/*.vue", "src/**/*.gql"],
   },
 };

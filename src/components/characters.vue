@@ -1,12 +1,11 @@
 <template>
-  <div class="hello">
+  <section>
     <ul>
       <li v-for="character in characters" :key="character.id">
         {{ character.name }}
       </li>
     </ul>
-    Page: {{ page }}
-  </div>
+  </section>
 </template>
 
 <script lang="ts">
@@ -29,7 +28,12 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { result } = useQuery(charactersQuery, { page: props.page });
+    // Get current url search filter after ?="", and
+    // clean it up by removing spacebar url encoding
+    var searchFilter = window.location.search.substr(2);
+    var searchFilterClean = searchFilter.replaceAll("%20", " ");
+
+    const { result } = useQuery(charactersQuery, { page: props.page, filter: searchFilterClean });
     const characters = useResult(result, null, (data) => data.characters.results);
 
     return { characters };
@@ -38,24 +42,26 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-h2 {
-  margin: 20px 0 0;
-  font-size: 26px;
-}
+section {
+  h2 {
+    margin: 20px 0 0;
+    font-size: 26px;
+  }
 
-ul {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  list-style-type: none;
-  margin: 10px 40px;
-  padding: 0;
+  ul {
+    display: grid;
+    grid-template-columns: 1fr;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
 
-  li {
-    background: darksalmon;
-    color: black;
-    padding: 3px 5px;
-    border-radius: 4px;
-    margin: 3px 5px;
+    li {
+      background: $blue-400;
+      color: black;
+      padding: 10px 12px;
+      border-radius: 4px;
+      margin: 3px 5px;
+    }
   }
 }
 </style>

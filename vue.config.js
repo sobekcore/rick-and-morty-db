@@ -7,4 +7,11 @@ module.exports = {
       .loader("graphql-tag/loader")
       .end();
   },
+  css: {
+    loaderOptions: {
+      sass: {
+        prependData: '@import "@/assets/globals.scss";',
+      },
+    },
+  },
 };
