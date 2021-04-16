@@ -1,0 +1,12 @@
+query favoritesQuery($favorite: [ID!]!) {
+  charactersByIds(ids: $favorite) {
+    image
+    id
+    name
+    gender
+    species
+    episode {
+      episode
+    }
+  }
+}

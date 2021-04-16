@@ -1,5 +1,10 @@
 <template>
-  <section>
+  <section v-if="loaded == false">
+    <div id="load-wrapper">
+      <h2>Loading characters chunk...</h2>
+    </div>
+  </section>
+  <section v-else>
     <ul class="char-list">
       <li class="char-item" v-for="character in characters" :key="character.id">
         <ul class="info-list">
@@ -17,6 +22,7 @@
               role="button"
               id="favorite"
               src="../assets/favorite.svg"
+              @click="saveFavorite(character.id)"
             />
           </li>
         </ul>
@@ -31,18 +37,44 @@ import { useQuery, useResult } from "@vue/apollo-composable";
 
 // Need to disable TypeScript and ESLint due to relative
 // import bug, not sure how to easily fix this without hacks.
-// eslint-disable-next-line
+
+/* eslint-disable */
 // @ts-ignore
 import charactersQuery from "../graphql/characters.query.gql";
+// @ts-ignore
+import favoritesQuery from "../graphql/favorites.query.gql";
+/* eslint-enable */
 
 export default defineComponent({
   name: "Characters",
   props: {
     page: {
       type: Number,
-      required: true,
       default: 1,
     },
+    favorite: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  methods: {
+    saveFavorite: function (id: string) {
+      localStorage.setItem("fav-char-" + id, id);
+      this.loaded = true;
+    },
+  },
+  data() {
+    return {
+      loaded: false,
+    };
+  },
+  mounted() {
+    // I didnt want to make it over complicated in just a simple animation in
+    // a recruitment task, but ideally of course you'd want to make run animation
+    // untill DOM is fully loaded, not in hard coded value delay.
+    setTimeout(() => {
+      this.loaded = true;
+    }, 1800);
   },
   async setup(props) {
     // Get current url search filter after ?="", and
@@ -50,19 +82,53 @@ export default defineComponent({
     var searchFilter = window.location.search.substr(2);
     var searchFilterClean = searchFilter.replaceAll("%20", " ");
 
-    const { result } = useQuery(charactersQuery, { page: props.page, filter: searchFilterClean });
-    const characters = useResult(result, null, (data) => data.characters.results);
+    if (props.favorite == true) {
+      // Show favorite characters
+      let array = [];
+      for (var i = 0; i <= window.localStorage.length; i++) {
+        let favorites = Number(localStorage.getItem("fav-char-" + i));
+        array.push(favorites);
+      }
 
-    return { characters };
+      const { result } = useQuery(favoritesQuery, { favorite: array });
+      const characters = useResult(result, null, (data) => data.charactersByIds);
+
+      return { characters };
+    } else {
+      // Show all characters
+      const { result } = useQuery(charactersQuery, { page: props.page, filter: searchFilterClean });
+      const characters = useResult(result, null, (data) => data.characters.results);
+
+      return { characters };
+    }
   },
 });
 </script>
 
 <style scoped lang="scss">
 section {
-  h2 {
-    margin: 20px 0 0;
-    font-size: 26px;
+  #load-wrapper {
+    border-bottom: 2px solid $gray-100;
+    padding: 37px 0px;
+
+    h2 {
+      font: 18px "Poppins", sans-serif;
+      color: $gray-200;
+      text-align: center;
+      margin: 0;
+      animation: 0.6s fadeOut;
+      animation-delay: 1100ms;
+      animation-fill-mode: forwards;
+    }
+  }
+
+  @keyframes fadeOut {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
   }
 
   .char-list {
@@ -73,11 +139,9 @@ section {
     margin: 0;
 
     .char-item {
-      color: black;
-      padding: 4px 0px;
-      border-radius: 4px;
       border-bottom: 2px solid $gray-100;
-      margin: 3px 5px;
+      margin: 3px 0;
+      padding: 4px 0;
 
       .info-list {
         display: grid;
