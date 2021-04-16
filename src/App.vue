@@ -1,12 +1,21 @@
 <template>
   <article v-if="information !== null">
-    <Navbar :count="information.count" />
-    <ul id="navchar-list">
-      <li @click="allCharacters">All Characters</li>
-      <li @click="favorites">Favorites</li>
-    </ul>
-    <Navchar />
+    <Header :count="information.count" />
+    <nav v-if="showFavorites == true">
+      <ul id="navchar-list">
+        <li @click="allCharacters">All Characters</li>
+        <li class="active" @click="favorites">Favorites</li>
+      </ul>
+    </nav>
+    <nav v-else>
+      <ul id="navchar-list">
+        <li class="active" @click="allCharacters">All Characters</li>
+        <li @click="favorites">Favorites</li>
+      </ul>
+    </nav>
+    <!-- If more tabs on navigation add here... -->
 
+    <Navchar />
     <!-- Display either all characters or favorites -->
     <section v-if="showFavorites == true">
       <Suspense>
@@ -16,6 +25,8 @@
       </Suspense>
     </section>
     <section v-else>
+      <!-- If pagination is a must, delete this loop and simply
+      pass in page number by buttons clicks with methods -->
       <div v-for="index in information.pages" :key="index">
         <Suspense>
           <template #default>
@@ -32,7 +43,7 @@ import { defineComponent, defineAsyncComponent } from "vue";
 import { useQuery, useResult } from "@vue/apollo-composable";
 
 // Import Components
-import Navbar from "./components/navbar.vue";
+import Header from "./components/header.vue";
 import Navchar from "./components/navchar.vue";
 
 // Asynchronous Characters loading
@@ -49,7 +60,7 @@ export default defineComponent({
   name: "App",
   components: {
     Characters,
-    Navbar,
+    Header,
     Navchar,
   },
   data() {
@@ -74,30 +85,45 @@ export default defineComponent({
 });
 </script>
 
+<!-- Writing it just in case: CSS styling in a lot of places
+is done with tags and not with classes/id's thanks to Vue's
+scope feature on styling. Normally of course i would do it
+fully with classes + id's or BEM or any other methodology. -->
 <style scope lang="scss">
 article {
-  #navchar-list {
-    font: 18px "Poppins", sans-serif;
-    font-weight: 500;
-    list-style-type: none;
-    color: $gray-200;
-    display: flex;
-    padding: 0;
-
-    li {
-      margin: 7px 21px;
-      padding: 3px 9px;
-      cursor: pointer;
-    }
-
-    @media (max-width: $mobile-breakpoint) {
-      justify-content: space-around;
-      border-bottom: 2px solid $gray-100;
-      padding-bottom: 21px;
-      margin-bottom: 0;
+  nav {
+    #navchar-list {
+      font: 18px "Poppins", sans-serif;
+      font-weight: 500;
+      list-style-type: none;
+      color: $gray-200;
+      margin: 18px 44px;
+      display: flex;
+      padding: 0;
 
       li {
-        margin: 7px 0;
+        margin: 7px 21px;
+        padding: 3px 9px;
+        cursor: pointer;
+      }
+
+      li.active {
+        color: $blue-400;
+        border-bottom: 4px solid $blue-400;
+      }
+
+      @media (max-width: $mobile-breakpoint) {
+        // Navbar column direction in case of
+        // adding more tabs to the navigation
+        flex-direction: column;
+        align-items: center;
+        border-bottom: 2px solid $gray-100;
+        padding-bottom: 21px;
+        margin: 18px 0 0 0;
+
+        li {
+          margin: 7px 0;
+        }
       }
     }
   }

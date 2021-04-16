@@ -17,13 +17,25 @@
             {{ character.episode[character.episode.length - 1].episode }}
           </li>
           <li class="info-item favorite">
-            <img
-              title="Add to favorites"
-              role="button"
-              id="favorite"
-              src="../assets/favorite.svg"
-              @click="saveFavorite(character.id)"
-            />
+            <!-- Render different button depending if its favorite or not -->
+            <div v-if="favorite == true">
+              <img
+                title="Remove from favorites"
+                role="button"
+                class="is-favorite"
+                src="../assets/is-favorite.svg"
+                @click="deleteFavorite(character.id)"
+              />
+            </div>
+            <div v-else>
+              <img
+                title="Add to favorites"
+                role="button"
+                class="favorite"
+                src="../assets/favorite.svg"
+                @click="saveFavorite(character.id)"
+              />
+            </div>
           </li>
         </ul>
       </li>
@@ -59,8 +71,23 @@ export default defineComponent({
   },
   methods: {
     saveFavorite: function (id: string) {
-      localStorage.setItem("fav-char-" + id, id);
-      this.loaded = true;
+      // Get current local storage array and add new character to that
+      // eslint-disable-next-line
+      let array = JSON.parse(localStorage.getItem("rnmdb-favorite-characters")!);
+      array.push(id);
+      localStorage.setItem("rnmdb-favorite-characters", JSON.stringify(array));
+    },
+    deleteFavorite: function (id: string) {
+      // Get current local storage array and remove certain character from it
+      // eslint-disable-next-line
+      let array = JSON.parse(localStorage.getItem("rnmdb-favorite-characters")!);
+
+      let index = array.indexOf(id);
+      if (index > -1) {
+        array.splice(index, 1);
+      }
+
+      localStorage.setItem("rnmdb-favorite-characters", JSON.stringify(array));
     },
   },
   data() {
@@ -84,13 +111,10 @@ export default defineComponent({
 
     if (props.favorite == true) {
       // Show favorite characters
-      let array = [];
-      for (var i = 0; i <= window.localStorage.length; i++) {
-        let favorites = Number(localStorage.getItem("fav-char-" + i));
-        array.push(favorites);
-      }
+      // eslint-disable-next-line
+      let favorites = JSON.parse(localStorage.getItem("rnmdb-favorite-characters")!);
 
-      const { result } = useQuery(favoritesQuery, { favorite: array });
+      const { result } = useQuery(favoritesQuery, { favorite: favorites });
       const characters = useResult(result, null, (data) => data.charactersByIds);
 
       return { characters };
@@ -140,6 +164,7 @@ section {
 
     .char-item {
       border-bottom: 2px solid $gray-100;
+      max-width: 100%;
       margin: 3px 0;
       padding: 4px 0;
 
@@ -159,12 +184,17 @@ section {
             border-radius: 10px;
           }
 
-          #favorite {
+          .favorite,
+          .is-favorite {
             height: 46px;
             padding: 10px;
             border: 2px solid $blue-400;
             border-radius: 8px;
             cursor: pointer;
+          }
+
+          .is-favorite {
+            background: $blue-400;
           }
         }
       }
@@ -190,7 +220,7 @@ section {
 
           .info-item.name {
             grid-row: 1 span / 4;
-            margin: -33px 80px 10px 80px;
+            margin: -33px 80px 12px 80px;
             font-size: 21px;
             word-wrap: break-word;
           }
@@ -201,6 +231,7 @@ section {
 
           .info-item.favorite::before {
             content: "Favorite?";
+            line-height: 34px;
             display: block;
             margin-top: 10px;
           }

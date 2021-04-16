@@ -14,9 +14,13 @@ $mobile-breakpoint: 699px;
 
 body {
   width: 100%;
-  overflow-x: hidden;
+  font-family: "Poppins", sans-serif;
   margin: 0;
   padding: 0;
+}
+
+html, body {
+  overflow-x: hidden;
 }
 
 #app {

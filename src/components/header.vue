@@ -1,5 +1,5 @@
 <template>
-  <nav>
+  <header>
     <a title="Rick &#38; Morty Database" href="/">
       <img
         id="logo"
@@ -20,14 +20,14 @@
     <p>
       Currently there are <span>{{ count }}</span> characters to choose from.
     </p>
-  </nav>
+  </header>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "Navbar",
+  name: "Header",
   props: {
     count: {
       type: Number,
@@ -37,7 +37,7 @@ export default defineComponent({
     goToUrl: function () {
       // eslint-disable-next-line
       // @ts-ignore
-      var url = document.getElementById("url").value;
+      let url = document.getElementById("url").value;
       window.location.search = "=" + url;
     },
   },
@@ -51,12 +51,8 @@ export default defineComponent({
 });
 </script>
 
-<!-- Writing it just in case: CSS styling in a lot of places
-is done with tags and not with classes/id's thanks to Vue's
-scope feature on styling. Normally of course i would do it
-fully with classes + id's or BEM or any other methodology. -->
 <style scope lang="scss">
-nav {
+header {
   display: grid;
   grid-template-columns: 380px 500px auto;
   border-bottom: 2px solid $gray-100;
