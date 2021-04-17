@@ -14,7 +14,6 @@ $mobile-breakpoint: 699px;
 
 body {
   width: 100%;
-  font-family: "Poppins", sans-serif;
   margin: 0;
   padding: 0;
 }
@@ -24,7 +23,8 @@ html, body {
 }
 
 #app {
-  font-family: sans-serif;
+  font-family: "Poppins", sans-serif;
+  max-width: 100%;
 }
 
 ::selection {
@@ -33,7 +33,7 @@ html, body {
 }
 
 body::-webkit-scrollbar {
-  width: 12px;
+  width: 14px;
 }
 
 body::-webkit-scrollbar-track {
@@ -42,7 +42,8 @@ body::-webkit-scrollbar-track {
 
 body::-webkit-scrollbar-thumb {
   background: $blue-400;
-  border-radius: 22px 0 0 22px;
+  border: 3px solid $gray-100;
+  border-radius: 16px;
 }
 
 img {

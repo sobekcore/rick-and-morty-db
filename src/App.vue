@@ -2,13 +2,13 @@
   <article v-if="information !== null">
     <Header :count="information.count" />
     <nav v-if="showFavorites == true">
-      <ul id="navchar-list">
+      <ul class="navbar-list">
         <li @click="allCharacters">All Characters</li>
         <li class="active" @click="favorites">Favorites</li>
       </ul>
     </nav>
     <nav v-else>
-      <ul id="navchar-list">
+      <ul class="navbar-list">
         <li class="active" @click="allCharacters">All Characters</li>
         <li @click="favorites">Favorites</li>
       </ul>
@@ -16,6 +16,7 @@
     <!-- If more tabs on navigation add here... -->
 
     <Navchar />
+    <h2 class="load" v-if="!showFavorites">Loading characters...</h2>
     <!-- Display either all characters or favorites -->
     <section v-if="showFavorites == true">
       <Suspense>
@@ -71,10 +72,22 @@ export default defineComponent({
   methods: {
     allCharacters: function () {
       this.$data.showFavorites = false;
+      document.cookie = "showFavorites = false;";
     },
     favorites: function () {
       this.$data.showFavorites = true;
+      document.cookie = "showFavorites = true;";
     },
+  },
+  mounted() {
+    // Loads last page visited by user from cookies
+    let bool = document.cookie.substr(14) == "true";
+    this.$data.showFavorites = bool;
+
+    // Displaying loading of characters
+    if (!this.showFavorites) {
+      setTimeout(() => (document.getElementsByClassName("load")[0].className += " out"), 3500);
+    }
   },
   setup() {
     const { result } = useQuery(informationQuery);
@@ -92,7 +105,7 @@ fully with classes + id's or BEM or any other methodology. -->
 <style scope lang="scss">
 article {
   nav {
-    #navchar-list {
+    .navbar-list {
       font: 18px "Poppins", sans-serif;
       font-weight: 500;
       list-style-type: none;
@@ -105,6 +118,12 @@ article {
         margin: 7px 21px;
         padding: 3px 9px;
         cursor: pointer;
+        transition: 0.25s text-shadow, 0.25s transform;
+      }
+
+      li:hover {
+        text-shadow: 0 0 14px $blue-400;
+        transform: rotate(-6deg);
       }
 
       li.active {
@@ -125,6 +144,36 @@ article {
           margin: 7px 0;
         }
       }
+    }
+  }
+
+  .load {
+    position: absolute;
+    font: 21px "Poppins", sans-serif;
+    font-weight: 500;
+    color: $gray-200;
+    left: 50%;
+    padding-top: 30px;
+    transform: translateX(-50%);
+    z-index: -1;
+    user-select: none;
+  }
+
+  .load.out {
+    animation: 0.6s fadeOut;
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes fadeOut {
+    0% {
+      opacity: 1;
+    }
+    99% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 0;
+      display: none;
     }
   }
 }
