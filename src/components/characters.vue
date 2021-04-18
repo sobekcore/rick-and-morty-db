@@ -6,12 +6,27 @@
     <ul class="char-list">
       <li class="char-item" v-for="character in characters" :key="character.id">
         <ul class="info-list">
-          <li class="info-item">
+          <li v-if="character.status == 'Alive'" class="info-item">
             <img alt="Character Image" class="photo" :src="character.image" />
+          </li>
+          <li v-else class="info-item">
+            <img alt="Character Image" class="photo-dead" :src="character.image" />
+            <img class="ribbon" src="../assets/ribbon.svg" />
           </li>
           <li class="info-item id">{{ character.id }}</li>
           <li class="info-item name">{{ character.name }}</li>
-          <li class="info-item gender">{{ character.gender }}</li>
+          <li v-if="character.gender == 'Male'" class="info-item gender">
+            <img src="../assets/male.svg" />{{ character.gender }}
+          </li>
+          <li v-else-if="character.gender == 'Female'" class="info-item gender">
+            <img src="../assets/female.svg" />{{ character.gender }}
+          </li>
+          <li v-else-if="character.gender == 'Genderless'" class="info-item gender">
+            <img class="genderless" src="../assets/genderless.svg" />{{ character.gender }}
+          </li>
+          <li v-else class="info-item gender capitalize">
+            <img class="unknown" src="../assets/unknown.svg" />{{ character.gender }}
+          </li>
           <li class="info-item species">{{ character.species }}</li>
           <li class="info-item episode">
             {{ character.episode[character.episode.length - 1].episode }}
@@ -177,10 +192,40 @@ section {
         text-align: center;
         padding: 0;
 
+        // Changing offests of gender svg's
+        .info-item.gender {
+          img {
+            transform: translate(-3px, 5px);
+          }
+
+          .genderless {
+            transform: translate(-5px, 1px);
+          }
+
+          .unknown {
+            transform: translate(-5px, -5px);
+          }
+        }
+
+        .info-item.gender.capitalize {
+          text-transform: capitalize;
+        }
+
         .info-item {
-          .photo {
+          .photo,
+          .photo-dead {
             height: 80px;
             border-radius: 10px;
+          }
+
+          .ribbon {
+            position: aboslute;
+            transform: translate(3px, -55px);
+            margin-left: -15px;
+          }
+
+          .photo-dead {
+            filter: grayscale(100%) contrast(0.6) brightness(1.2);
           }
 
           .is-favorite,
@@ -306,6 +351,9 @@ section {
 .removed.show {
   font: 44px "Poppins", sans-serif;
   color: rgb(209, 74, 74);
+  background: white;
+  padding: 8px 14px;
+  border-radius: 8px;
   font-weight: 500;
   display: block;
   position: fixed;

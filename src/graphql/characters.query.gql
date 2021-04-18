@@ -6,6 +6,7 @@ query charactersQuery($page: Int!, $filter: String) {
       name
       gender
       species
+      status
       episode {
         episode
       }

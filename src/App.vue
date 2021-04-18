@@ -1,16 +1,17 @@
 <template>
   <article v-if="information">
     <Header :count="information.count" />
+    <!-- Render different active tabs depending on which one is open -->
     <nav class="navbar" v-if="showFavorites == true">
       <ul class="navbar-list">
-        <li @click="allCharacters">All Characters</li>
-        <li class="active" @click="favorites">Favorites</li>
+        <li class="navbar-item" @click="allCharacters">All Characters</li>
+        <li class="navbar-item active" @click="favorites">Favorites</li>
       </ul>
     </nav>
     <nav class="navbar" v-else>
       <ul class="navbar-list">
-        <li class="active" @click="allCharacters">All Characters</li>
-        <li @click="favorites">Favorites</li>
+        <li class="navbar-item active" @click="allCharacters">All Characters</li>
+        <li class="navbar-item" @click="favorites">Favorites</li>
       </ul>
     </nav>
     <!-- If more tabs on navigation add here... -->
@@ -36,25 +37,27 @@
     <nav class="pagination" v-if="!showFavorites">
       <ul class="page-list">
         <button class="show-more" @click="showPagination()">Pages...</button>
-        <li>
-          <div v-if="page > 1" class="page-special" @click="changePage(1)">
+        <!-- Change pages by 1 or all backwards -->
+        <li class="page-section">
+          <div v-if="page > 1" class="page special" @click="changePage(1)">
             <img class="pointer" src="./assets/pointer.svg" />
             <img class="pointer" src="./assets/pointer.svg" />
           </div>
-          <div v-else class="page-special disabled">
+          <div v-else class="page special disabled">
             <img class="pointer" src="./assets/pointer-disabled.svg" />
             <img class="pointer" src="./assets/pointer-disabled.svg" />
           </div>
         </li>
-        <li>
-          <div v-if="page > 1" class="page-special" @click="changePage(--page)">
+        <li class="page-section">
+          <div v-if="page > 1" class="page special" @click="changePage(--page)">
             <img class="pointer" src="./assets/pointer.svg" />
           </div>
-          <div v-else class="page-special disabled">
+          <div v-else class="page special disabled">
             <img class="pointer" src="./assets/pointer-disabled.svg" />
           </div>
         </li>
-        <li v-for="index in information.pages" :key="index">
+        <!-- Change pages by exact number of provided amounts -->
+        <li class="page-section" v-for="index in information.pages" :key="index">
           <div class="page" v-if="index == page - 2" @click="changePage(page - 2)">
             {{ index }}
           </div>
@@ -73,24 +76,25 @@
             {{ index }}
           </div>
         </li>
-        <li>
-          <div v-if="page < information.pages" class="page-special" @click="changePage(++page)">
+        <!-- Change pages by 1 or all forwards -->
+        <li class="page-section">
+          <div v-if="page < information.pages" class="page special" @click="changePage(++page)">
             <img class="pointer-flip" src="./assets/pointer.svg" />
           </div>
-          <div v-else class="page-special disabled">
+          <div v-else class="page special disabled">
             <img class="pointer-flip" src="./assets/pointer-disabled.svg" />
           </div>
         </li>
-        <li>
+        <li class="page-section">
           <div
             v-if="page < information.pages"
-            class="page-special"
+            class="page special"
             @click="changePage(information.pages)"
           >
             <img class="pointer-flip" src="./assets/pointer.svg" />
             <img class="pointer-flip" src="./assets/pointer.svg" />
           </div>
-          <div v-else class="page-special disabled">
+          <div v-else class="page special disabled">
             <img class="pointer-flip" src="./assets/pointer-disabled.svg" />
             <img class="pointer-flip" src="./assets/pointer-disabled.svg" />
           </div>
@@ -98,6 +102,8 @@
       </ul>
     </nav>
   </article>
+
+  <!-- Error page when no characters are found -->
   <div id="error-wrapper" v-else-if="!information && loaded">
     <img
       id="logo"
@@ -105,9 +111,11 @@
       alt="Rick &#38; Morty Database"
       src="./assets/rick-and-morty.svg"
     />
-    <h2>Sorry, we could not find you character.</h2>
-    <a href="/"><button>Go back to safety</button></a>
+    <h2 id="desc">Sorry, we could not find you character.</h2>
+    <a href="/"><button id="go-back">Go back to safety</button></a>
   </div>
+
+  <!-- Margin for a pagination fixed div -->
   <div id="pagination-margin" v-if="!showFavorites"></div>
 </template>
 
@@ -145,15 +153,15 @@ export default defineComponent({
   },
   methods: {
     allCharacters: function () {
-      this.$data.showFavorites = false;
+      this.showFavorites = false;
       document.cookie = "showFavorites = false;";
     },
     favorites: function () {
-      this.$data.showFavorites = true;
+      this.showFavorites = true;
       document.cookie = "showFavorites = true;";
     },
     changePage: function (page: number) {
-      this.$data.page = page;
+      this.page = page;
     },
     showPagination: function () {
       // Pagination on mobile toggle
@@ -168,10 +176,10 @@ export default defineComponent({
   mounted() {
     // Loads last page visited by user from cookies
     let bool = document.cookie.substr(14) == "true";
-    this.$data.showFavorites = bool;
+    this.showFavorites = bool;
 
     // If cant show characters display error after delay
-    setTimeout(() => (this.$data.loaded = true), 1400);
+    setTimeout(() => (this.loaded = true), 1400);
   },
   setup() {
     // Get current url search filter after ?="", and
@@ -188,8 +196,8 @@ export default defineComponent({
 });
 </script>
 
-<!-- Writing it just in case: CSS styling in a lot of places
-is done with tags and not with classes/id's thanks to Vue's
+<!-- Writing it just in case: CSS styling in some places is
+done with HTML tags and not with classes/id's thanks to Vue's
 scope feature on styling. Normally of course i would do it
 fully with classes + id's or BEM or any other methodology. -->
 <style scope lang="scss">
@@ -205,19 +213,19 @@ article {
       display: flex;
       padding: 0;
 
-      li {
+      .navbar-item {
         margin: 7px 21px;
         padding: 3px 9px;
         cursor: pointer;
         transition: 0.25s text-shadow, 0.25s color;
       }
 
-      li:hover {
+      .navbar-item:hover {
         text-shadow: 0 0 16px $blue-400;
         color: $blue-400;
       }
 
-      li.active {
+      .navbar-item.active {
         color: $blue-400;
         border-bottom: 4px solid $blue-400;
       }
@@ -231,7 +239,7 @@ article {
         padding-bottom: 21px;
         margin: 18px 0 0 0;
 
-        li {
+        .navbar-item {
           margin: 7px 0;
         }
       }
@@ -257,31 +265,30 @@ article {
         display: none;
       }
 
-      li {
+      .page-section {
         display: inline-block;
         user-select: none;
 
-        .page,
-        .page-special {
+        .page {
           margin: 5px;
           padding: 8px 0;
           border-radius: 10px;
           border: 2px solid $gray-200;
           font: 18px "Poppins", sans-serif;
-          color: $gray-200;
           font-weight: 500;
+          color: $gray-200;
           text-align: center;
           cursor: pointer;
           width: 48px;
-          transition: 0.18s box-shadow;
+          transition: 0.18s box-shadow, 0.25s border;
         }
 
-        .page:hover,
-        .page-special:hover {
+        .page:hover {
           box-shadow: 0 0 16px $blue-400;
+          border: 2px solid $blue-400;
         }
 
-        .page-special {
+        .page.special {
           .pointer {
             transform: translateY(-10%);
           }
@@ -306,11 +313,10 @@ article {
       @media (max-width: $mobile-breakpoint) {
         .show-more {
           display: block;
-          font: 18px "Poppins", sans-serif;
+          font: 21px "Poppins", sans-serif;
           color: $blue-400;
           padding: 15px 0;
           width: 100%;
-          margin: 0;
           background: none;
           border: none;
           outline: none;
@@ -322,11 +328,11 @@ article {
           margin-bottom: 8px;
         }
 
-        li {
+        .page-section {
           display: none;
         }
 
-        .show-more.active ~ li {
+        .show-more.active ~ .page-section {
           display: inline-block;
         }
       }
@@ -360,26 +366,26 @@ article {
     max-width: 100%;
   }
 
-  h2 {
+  #desc {
     font: 26px "Poppins", sans-serif;
     margin-bottom: 24px;
     font-weight: 500;
     color: $gray-200;
   }
 
-  button {
+  #go-back {
     padding: 9px 18px;
     border-radius: 14px;
-    outline: none;
     border: 2px solid $blue-400;
     font: 19px "Poppins", sans-serif;
     font-weight: 500;
     color: $blue-400;
     background: none;
+    outline: none;
     transition: 0.2s box-shadow;
   }
 
-  button:hover {
+  #go-back:hover {
     cursor: pointer;
     box-shadow: 0 0 16px $blue-400;
   }
