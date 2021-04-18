@@ -1,5 +1,5 @@
-query informationQuery {
-  characters {
+query informationQuery($filter: String) {
+  characters(filter: { name: $filter }) {
     info {
       pages
       count

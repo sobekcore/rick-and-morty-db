@@ -7,7 +7,8 @@
       <li>Gender</li>
       <li>Species</li>
       <li>Last Episode</li>
-      <li>Add To Favorites</li>
+      <li v-if="favorite">Remove from Favorites</li>
+      <li v-else>Add to Favorites</li>
     </ul>
   </section>
 </template>
@@ -17,6 +18,12 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Navchar",
+  props: {
+    favorite: {
+      type: Boolean,
+      default: false,
+    },
+  },
 });
 </script>
 

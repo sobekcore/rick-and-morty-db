@@ -1,5 +1,8 @@
 <template>
-  <section>
+  <div class="load-wrapper" v-if="!characters && !favorite">
+    <h2 class="load">Loading characters...</h2>
+  </div>
+  <section v-else>
     <ul class="char-list">
       <li class="char-item" v-for="character in characters" :key="character.id">
         <ul class="info-list">
@@ -134,8 +137,7 @@ export default defineComponent({
 
       return { characters };
     } else {
-      // Get current url search filter after ?="", and
-      // clean it up by removing spacebar url encoding
+      // Get current url search filter
       var searchFilter = window.location.search.substr(2);
       var searchFilterClean = searchFilter.replaceAll("%20", " ");
 
@@ -285,13 +287,13 @@ section {
   align-items: center;
   justify-content: center;
   border-bottom: 2px solid $gray-100;
-  height: 103px;
+  height: 100px;
   width: 100%;
 
   .load {
     font: 19px "Poppins", sans-serif;
     color: $gray-200;
-    margin: 0;
+    padding: 0;
   }
 }
 
@@ -310,6 +312,7 @@ section {
   z-index: 100;
   left: 50%;
   top: 50%;
+  user-select: none;
   transform: translate(-50%, -50%);
   animation: 2.4s fadeIn;
   animation-direction: forwards;

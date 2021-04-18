@@ -1,13 +1,13 @@
 <template>
-  <article v-if="information !== null">
+  <article v-if="information">
     <Header :count="information.count" />
-    <nav v-if="showFavorites == true">
+    <nav class="navbar" v-if="showFavorites == true">
       <ul class="navbar-list">
         <li @click="allCharacters">All Characters</li>
         <li class="active" @click="favorites">Favorites</li>
       </ul>
     </nav>
-    <nav v-else>
+    <nav class="navbar" v-else>
       <ul class="navbar-list">
         <li class="active" @click="allCharacters">All Characters</li>
         <li @click="favorites">Favorites</li>
@@ -15,10 +15,9 @@
     </nav>
     <!-- If more tabs on navigation add here... -->
 
-    <Navchar />
-    <h2 class="load" v-if="!showFavorites">Loading characters...</h2>
+    <Navchar :favorite="showFavorites" />
     <!-- Display either all characters or favorites -->
-    <section v-if="showFavorites == true">
+    <section v-if="showFavorites">
       <Suspense>
         <template #default>
           <Characters :favorite="true" />
@@ -26,17 +25,90 @@
       </Suspense>
     </section>
     <section v-else>
-      <!-- If pagination is a must, delete this loop and simply
-      pass in page number by buttons clicks with methods -->
-      <div v-for="index in information.pages" :key="index">
-        <Suspense>
-          <template #default>
-            <Characters :page="index" />
-          </template>
-        </Suspense>
-      </div>
+      <Suspense>
+        <template #default>
+          <Characters :page="page" :key="page" />
+        </template>
+      </Suspense>
     </section>
+
+    <!-- Rendering pagination buttons depending on page states -->
+    <nav class="pagination" v-if="!showFavorites">
+      <ul class="page-list">
+        <button class="show-more" @click="showPagination()">Pages...</button>
+        <li>
+          <div v-if="page > 1" class="page-special" @click="changePage(1)">
+            <img class="pointer" src="./assets/pointer.svg" />
+            <img class="pointer" src="./assets/pointer.svg" />
+          </div>
+          <div v-else class="page-special disabled">
+            <img class="pointer" src="./assets/pointer-disabled.svg" />
+            <img class="pointer" src="./assets/pointer-disabled.svg" />
+          </div>
+        </li>
+        <li>
+          <div v-if="page > 1" class="page-special" @click="changePage(--page)">
+            <img class="pointer" src="./assets/pointer.svg" />
+          </div>
+          <div v-else class="page-special disabled">
+            <img class="pointer" src="./assets/pointer-disabled.svg" />
+          </div>
+        </li>
+        <li v-for="index in information.pages" :key="index">
+          <div class="page" v-if="index == page - 2" @click="changePage(page - 2)">
+            {{ index }}
+          </div>
+          <div class="page" v-if="index == page - 1" @click="changePage(page - 1)">
+            {{ index }}
+          </div>
+          <div class="page active" v-if="index == page">{{ index }}</div>
+          <div class="page" v-if="index == page + 1" @click="changePage(page + 1)">
+            {{ index }}
+          </div>
+          <div class="page" v-if="index == page + 2" @click="changePage(page + 2)">
+            {{ index }}
+          </div>
+          <div class="page" v-if="index == page + 5" @click="changePage(page + 5)">...</div>
+          <div class="page" v-if="index == page + 7" @click="changePage(page + 7)">
+            {{ index }}
+          </div>
+        </li>
+        <li>
+          <div v-if="page < information.pages" class="page-special" @click="changePage(++page)">
+            <img class="pointer-flip" src="./assets/pointer.svg" />
+          </div>
+          <div v-else class="page-special disabled">
+            <img class="pointer-flip" src="./assets/pointer-disabled.svg" />
+          </div>
+        </li>
+        <li>
+          <div
+            v-if="page < information.pages"
+            class="page-special"
+            @click="changePage(information.pages)"
+          >
+            <img class="pointer-flip" src="./assets/pointer.svg" />
+            <img class="pointer-flip" src="./assets/pointer.svg" />
+          </div>
+          <div v-else class="page-special disabled">
+            <img class="pointer-flip" src="./assets/pointer-disabled.svg" />
+            <img class="pointer-flip" src="./assets/pointer-disabled.svg" />
+          </div>
+        </li>
+      </ul>
+    </nav>
   </article>
+  <div id="error-wrapper" v-else-if="!information && loaded">
+    <img
+      id="logo"
+      role="banner"
+      alt="Rick &#38; Morty Database"
+      src="./assets/rick-and-morty.svg"
+    />
+    <h2>Sorry, we could not find you character.</h2>
+    <a href="/"><button>Go back to safety</button></a>
+  </div>
+  <div id="pagination-margin" v-if="!showFavorites"></div>
 </template>
 
 <script lang="ts">
@@ -67,6 +139,8 @@ export default defineComponent({
   data() {
     return {
       showFavorites: false,
+      loaded: false,
+      page: 1,
     };
   },
   methods: {
@@ -78,19 +152,35 @@ export default defineComponent({
       this.$data.showFavorites = true;
       document.cookie = "showFavorites = true;";
     },
+    changePage: function (page: number) {
+      this.$data.page = page;
+    },
+    showPagination: function () {
+      // Pagination on mobile toggle
+      let show = document.getElementsByClassName("show-more");
+      if (show[0].className == "show-more") {
+        show[0].className = "show-more active";
+      } else {
+        show[0].className = "show-more";
+      }
+    },
   },
   mounted() {
     // Loads last page visited by user from cookies
     let bool = document.cookie.substr(14) == "true";
     this.$data.showFavorites = bool;
 
-    // Displaying loading of characters
-    if (!this.showFavorites) {
-      setTimeout(() => (document.getElementsByClassName("load")[0].className += " out"), 3500);
-    }
+    // If cant show characters display error after delay
+    setTimeout(() => (this.$data.loaded = true), 1400);
   },
   setup() {
-    const { result } = useQuery(informationQuery);
+    // Get current url search filter after ?="", and
+    // clean it up by removing spacebar url encoding
+    var searchFilter = window.location.search.substr(2);
+    var searchFilterClean = searchFilter.replaceAll("%20", " ");
+
+    // Getting right number of pages
+    const { result } = useQuery(informationQuery, { filter: searchFilterClean });
     const information = useResult(result, null, (data) => data.characters.info);
 
     return { information };
@@ -104,7 +194,8 @@ scope feature on styling. Normally of course i would do it
 fully with classes + id's or BEM or any other methodology. -->
 <style scope lang="scss">
 article {
-  nav {
+  // -- Navbar --
+  .navbar {
     .navbar-list {
       font: 18px "Poppins", sans-serif;
       font-weight: 500;
@@ -118,12 +209,12 @@ article {
         margin: 7px 21px;
         padding: 3px 9px;
         cursor: pointer;
-        transition: 0.25s text-shadow, 0.25s transform;
+        transition: 0.25s text-shadow, 0.25s color;
       }
 
       li:hover {
-        text-shadow: 0 0 14px $blue-400;
-        transform: rotate(-6deg);
+        text-shadow: 0 0 16px $blue-400;
+        color: $blue-400;
       }
 
       li.active {
@@ -147,34 +238,159 @@ article {
     }
   }
 
-  .load {
-    position: absolute;
-    font: 21px "Poppins", sans-serif;
+  // -- Pagination --
+  .pagination {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    background: white;
+    border-top: 2px solid $gray-100;
+    padding: 24px 0;
+
+    .page-list {
+      list-style-type: none;
+      margin: 0 0 0 60px;
+      padding: 0;
+
+      .show-more {
+        display: none;
+      }
+
+      li {
+        display: inline-block;
+        user-select: none;
+
+        .page,
+        .page-special {
+          margin: 5px;
+          padding: 8px 0;
+          border-radius: 10px;
+          border: 2px solid $gray-200;
+          font: 18px "Poppins", sans-serif;
+          color: $gray-200;
+          font-weight: 500;
+          text-align: center;
+          cursor: pointer;
+          width: 48px;
+          transition: 0.18s box-shadow;
+        }
+
+        .page:hover,
+        .page-special:hover {
+          box-shadow: 0 0 16px $blue-400;
+        }
+
+        .page-special {
+          .pointer {
+            transform: translateY(-10%);
+          }
+
+          .pointer-flip {
+            transform: translateY(-10%) rotate(-180deg);
+          }
+        }
+
+        .page.active {
+          background: $blue-400;
+          border: 2px solid $blue-400;
+          color: white;
+        }
+      }
+
+      @media (max-width: 899px) {
+        text-align: center;
+        margin-left: 0;
+      }
+
+      @media (max-width: $mobile-breakpoint) {
+        .show-more {
+          display: block;
+          font: 18px "Poppins", sans-serif;
+          color: $blue-400;
+          padding: 15px 0;
+          width: 100%;
+          margin: 0;
+          background: none;
+          border: none;
+          outline: none;
+          margin-top: -24px;
+          margin-bottom: -24px;
+        }
+
+        .show-more.active {
+          margin-bottom: 8px;
+        }
+
+        li {
+          display: none;
+        }
+
+        .show-more.active ~ li {
+          display: inline-block;
+        }
+      }
+    }
+  }
+}
+
+#pagination-margin {
+  height: 102px;
+  width: 100%;
+
+  @media (max-width: $mobile-breakpoint) {
+    height: 57px;
+  }
+}
+
+// -- Error Page --
+#error-wrapper {
+  position: absolute;
+  width: 90%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  animation: 1s fadeIn;
+  animation-fill-mode: forwards;
+  opacity: 0;
+
+  #logo {
+    height: 120px;
+    max-width: 100%;
+  }
+
+  h2 {
+    font: 26px "Poppins", sans-serif;
+    margin-bottom: 24px;
     font-weight: 500;
     color: $gray-200;
-    left: 50%;
-    padding-top: 30px;
-    transform: translateX(-50%);
-    z-index: -1;
-    user-select: none;
   }
 
-  .load.out {
-    animation: 0.6s fadeOut;
-    animation-fill-mode: forwards;
+  button {
+    padding: 9px 18px;
+    border-radius: 14px;
+    outline: none;
+    border: 2px solid $blue-400;
+    font: 19px "Poppins", sans-serif;
+    font-weight: 500;
+    color: $blue-400;
+    background: none;
+    transition: 0.2s box-shadow;
   }
 
-  @keyframes fadeOut {
-    0% {
-      opacity: 1;
-    }
-    99% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 0;
-      display: none;
-    }
+  button:hover {
+    cursor: pointer;
+    box-shadow: 0 0 16px $blue-400;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 </style>
