@@ -14,6 +14,7 @@
         :value="searchFilterClean"
         placeholder="Search for characters..."
         v-on:keyup.enter="goToUrl()"
+        autocomplete="off"
       />
       <img id="search" title="Search" role="search" src="../assets/search.svg" @click="goToUrl()" />
     </section>
@@ -35,9 +36,7 @@ export default defineComponent({
   },
   methods: {
     goToUrl: function () {
-      // eslint-disable-next-line
-      // @ts-ignore
-      let url = document.getElementById("url").value;
+      let url = (document.getElementById("url") as HTMLInputElement).value;
       window.location.search = "=" + url;
     },
   },
@@ -125,7 +124,7 @@ header {
     }
 
     section {
-      margin: 0 15vw;
+      margin: 0 20vw;
     }
   }
 

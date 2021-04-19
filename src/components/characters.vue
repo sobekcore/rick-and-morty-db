@@ -99,9 +99,11 @@ export default defineComponent({
     saveFavorite: function (id: string) {
       // Get current local storage array and add new character to that
 
-      // Removing possibility of duplicates in a array
-      // eslint-disable-next-line
-      let array = [...new Set(JSON.parse(localStorage.getItem("rnmdb-favorite-characters")!))];
+      // Removing possibility of duplicates in a favorites array
+      let array = Array.from(
+        // eslint-disable-next-line
+        new Set(JSON.parse(localStorage.getItem("rnmdb-favorite-characters")!))
+      );
       array.push(id);
       localStorage.setItem("rnmdb-favorite-characters", JSON.stringify(array));
 
@@ -360,7 +362,7 @@ section {
 
 .removed.show {
   font: 44px "Poppins", sans-serif;
-  color: rgb(209, 74, 74);
+  color: #d14a4a;
   background: white;
   padding: 8px 14px;
   border-radius: 8px;
