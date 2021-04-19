@@ -104,16 +104,9 @@
   </article>
 
   <!-- Error page when no characters are found -->
-  <div id="error-wrapper" v-else-if="!information && loaded">
-    <img
-      id="logo"
-      role="banner"
-      alt="Rick &#38; Morty Database"
-      src="./assets/rick-and-morty.svg"
-    />
-    <h2 id="desc">Sorry, we could not find you character.</h2>
-    <a href="/"><button id="go-back">Go back to safety</button></a>
-  </div>
+  <article v-else-if="!information && loaded">
+    <Error />
+  </article>
 
   <!-- Margin for a pagination fixed div -->
   <div id="pagination-margin" v-if="!showFavorites"></div>
@@ -126,6 +119,7 @@ import { useQuery, useResult } from "@vue/apollo-composable";
 // Import Components
 import Header from "./components/header.vue";
 import Navchar from "./components/navchar.vue";
+import Error from "./components/error.vue";
 
 // Asynchronous Characters loading
 const Characters = defineAsyncComponent({
@@ -143,6 +137,7 @@ export default defineComponent({
     Characters,
     Header,
     Navchar,
+    Error,
   },
   data() {
     return {
@@ -200,7 +195,7 @@ export default defineComponent({
 done with HTML tags and not with classes/id's thanks to Vue's
 scope feature on styling. Normally of course i would do it
 fully with classes + id's or BEM or any other methodology. -->
-<style scope lang="scss">
+<style lang="scss">
 article {
   // -- Navbar --
   .navbar {
@@ -284,7 +279,7 @@ article {
         }
 
         .page:hover {
-          box-shadow: 0 0 16px $blue-400;
+          box-shadow: 0 0 12px $blue-400;
           border: 2px solid $blue-400;
         }
 
@@ -346,57 +341,6 @@ article {
 
   @media (max-width: $mobile-breakpoint) {
     height: 57px;
-  }
-}
-
-// -- Error Page --
-#error-wrapper {
-  position: absolute;
-  width: 90%;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  animation: 1s fadeIn;
-  animation-fill-mode: forwards;
-  opacity: 0;
-
-  #logo {
-    height: 120px;
-    max-width: 100%;
-  }
-
-  #desc {
-    font: 26px "Poppins", sans-serif;
-    margin-bottom: 24px;
-    font-weight: 500;
-    color: $gray-200;
-  }
-
-  #go-back {
-    padding: 9px 18px;
-    border-radius: 14px;
-    border: 2px solid $blue-400;
-    font: 19px "Poppins", sans-serif;
-    font-weight: 500;
-    color: $blue-400;
-    background: none;
-    outline: none;
-    transition: 0.2s box-shadow;
-  }
-
-  #go-back:hover {
-    cursor: pointer;
-    box-shadow: 0 0 16px $blue-400;
-  }
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
   }
 }
 </style>

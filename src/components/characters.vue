@@ -1,4 +1,5 @@
 <template>
+  <!-- Displaying loading before data is fetched -->
   <div class="load-wrapper" v-if="!characters && !favorite">
     <h2 class="load">Loading characters...</h2>
   </div>
@@ -6,15 +7,19 @@
     <ul class="char-list">
       <li class="char-item" v-for="character in characters" :key="character.id">
         <ul class="info-list">
+          <!-- Photo & Status -->
           <li v-if="character.status == 'Alive'" class="info-item">
             <img alt="Character Image" class="photo" :src="character.image" />
           </li>
           <li v-else class="info-item">
-            <img alt="Character Image" class="photo-dead" :src="character.image" />
+            <img alt="Character Image" class="photo dead" :src="character.image" />
             <img class="ribbon" src="../assets/ribbon.svg" />
           </li>
+          <!-- Character ID -->
           <li class="info-item id">{{ character.id }}</li>
+          <!-- Name -->
           <li class="info-item name">{{ character.name }}</li>
+          <!-- Gender -->
           <li v-if="character.gender == 'Male'" class="info-item gender">
             <img src="../assets/male.svg" />{{ character.gender }}
           </li>
@@ -27,10 +32,13 @@
           <li v-else class="info-item gender capitalize">
             <img class="unknown" src="../assets/unknown.svg" />{{ character.gender }}
           </li>
+          <!-- Species -->
           <li class="info-item species">{{ character.species }}</li>
+          <!-- Last Episode -->
           <li class="info-item episode">
             {{ character.episode[character.episode.length - 1].episode }}
           </li>
+          <!-- Add to Favorites -->
           <li class="info-item favorite">
             <!-- Render different button depending if its favorite or not -->
             <div v-if="favorite">
@@ -56,6 +64,8 @@
       </li>
     </ul>
   </section>
+
+  <!-- Remove caption after animation -->
   <h2 class="removed">Removed</h2>
 </template>
 
@@ -100,9 +110,7 @@ export default defineComponent({
       for (var i = 0; i <= ids.length - 1; i++) {
         var choosed = ids[i].innerHTML;
 
-        if (choosed == id) {
-          break;
-        }
+        if (choosed == id) break;
       }
 
       let fav = document.getElementsByClassName("is-favorite");
@@ -121,14 +129,12 @@ export default defineComponent({
 
       localStorage.setItem("rnmdb-favorite-characters", JSON.stringify(array));
 
-      // Making tricky calculations on which button to scale
+      // Making tricky calculations on which button to animate
       let ids = document.getElementsByClassName("info-item id");
       for (var i = 0; i <= ids.length - 1; i++) {
         var choosed = ids[i].innerHTML;
 
-        if (choosed == id) {
-          break;
-        }
+        if (choosed == id) break;
       }
 
       let fav = document.getElementsByClassName("already-favorite");
@@ -168,6 +174,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 section {
+  // -- Characters --
   .char-list {
     display: grid;
     grid-template-columns: 1fr;
@@ -212,8 +219,7 @@ section {
         }
 
         .info-item {
-          .photo,
-          .photo-dead {
+          .photo {
             height: 80px;
             border-radius: 10px;
           }
@@ -224,13 +230,15 @@ section {
             margin-left: -15px;
           }
 
-          .photo-dead {
+          .photo.dead {
             filter: grayscale(100%) contrast(0.6) brightness(1.2);
           }
 
+          // Diferent styling on favorite buttons depending on location
           .is-favorite,
           .already-favorite {
             height: 46px;
+            min-width: 47px;
             padding: 10px;
             border: 2px solid $blue-400;
             border-radius: 8px;
@@ -265,8 +273,8 @@ section {
             position: fixed;
             transform: scale(600);
             animation-timing-function: ease-in;
-            z-index: 99;
             pointer-events: none;
+            z-index: 99;
           }
 
           .is-favorite:hover,
@@ -327,6 +335,7 @@ section {
   }
 }
 
+// -- Loading --
 .load-wrapper {
   display: flex;
   align-items: center;
@@ -342,6 +351,7 @@ section {
   }
 }
 
+// -- Removing --
 .removed {
   display: none;
   opacity: 0;

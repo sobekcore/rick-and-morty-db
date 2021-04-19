@@ -1,6 +1,6 @@
 <template>
   <header>
-    <a title="Rick &#38; Morty Database" href="/">
+    <a id="link" title="Rick &#38; Morty Database" href="/">
       <img
         id="logo"
         role="banner"
@@ -15,10 +15,10 @@
         placeholder="Search for characters..."
         v-on:keyup.enter="goToUrl()"
       />
-      <img id="search" title="Search" src="../assets/search.svg" @click="goToUrl()" />
+      <img id="search" title="Search" role="search" src="../assets/search.svg" @click="goToUrl()" />
     </section>
-    <p>
-      Currently there are <span>{{ count }}</span> characters to choose from.
+    <p id="text">
+      Currently there are <span id="count">{{ count }}</span> characters to choose from.
     </p>
   </header>
 </template>
@@ -42,16 +42,16 @@ export default defineComponent({
     },
   },
   setup() {
-    // Using clean search filter again to replace placeholder
+    // Using clean search filter & regex to replace placeholder
     var searchFilter = window.location.search.substr(2);
-    var searchFilterClean = searchFilter.replaceAll("%20", " ");
+    var searchFilterClean = searchFilter.replace(/%20/g, " ");
 
     return { searchFilterClean };
   },
 });
 </script>
 
-<style scope lang="scss">
+<style scoped lang="scss">
 header {
   display: grid;
   grid-template-columns: 380px 500px auto;
@@ -61,7 +61,7 @@ header {
   text-align: center;
   height: 140px;
 
-  a {
+  #link {
     margin: auto;
     padding: 10px;
 
@@ -102,14 +102,14 @@ header {
     }
   }
 
-  p {
+  #text {
     font: 21px "Poppins", sans-serif;
     color: $gray-200;
     font-weight: 500;
     margin: auto 0;
     padding: 40px 70px;
 
-    span {
+    #count {
       color: $blue-400;
     }
   }
@@ -118,7 +118,7 @@ header {
     grid-template-columns: 1fr;
     height: auto;
 
-    a {
+    #link {
       #logo {
         margin: 30px auto;
       }
@@ -134,7 +134,7 @@ header {
       margin: 0 20px;
     }
 
-    p {
+    #text {
       padding: 40px 20px;
       font-size: 19px;
     }

@@ -27,7 +27,7 @@ export default defineComponent({
 });
 </script>
 
-<style scope lang="scss">
+<style scoped lang="scss">
 section {
   #keys-list {
     font: 18px "Poppins", sans-serif;
@@ -39,7 +39,7 @@ section {
     background: $gray-100;
     text-align: center;
     padding: 12px 0;
-    margin: 0;
+    margin: 0 0 3px 0;
 
     @media (max-width: $mobile-breakpoint) {
       display: none;

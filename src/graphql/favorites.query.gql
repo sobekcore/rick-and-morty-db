@@ -5,6 +5,7 @@ query favoritesQuery($favorite: [ID!]!) {
     name
     gender
     species
+    status
     episode {
       episode
     }
