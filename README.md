@@ -14,17 +14,18 @@ If you dont want to read everything, just read this:
 * **`(9)`** - Removing characters from favorites has fancy animation, try it out.
 * **`(10)`** - **`Pagination`** is slightly modified, i thought it will fit better this way (explanation below).
 * **`(11)`** - Advanced **`responsiveness`** is implemented into the website, try it out. Its smooth to use on **`mobile`**.
+* **`(12)`** - Application is easily **`scallable`** and **`maintainable`** without chaning a single line of code thanks to its structure.
 
 However if you wanna know more in depth of my thinking process, please read sections below.
 
 ## Architectural Decisions
 Here i will explain some of the design choices, it's kinda important so i would like you to read it. If something is shifted in a way you dont like, im sorry. I could even change it back to the original design in a few minutes if it is a problem.
 
-**`(1)`** - Firstly, as you can see character data is displayed in pages as showcased in a template, however my version is highly customizable, and it could be displayed all in a single page thru loop (my first version was like this but i've decied to stick to the project, if u want to see it look at some of the previous commits). All of this is possible thanks to lazy loading and **`asynchronous`** characters loading. It downloades all the data at the beginning, but in a non aggresive way. This way it doesnt throw that many requests at once and also elegantly loads in a waterfall kinda method (see "Network" tab in dev-tools if you want proof for that).
+**`(1)`** - Firstly, as you can see character data is displayed in pages as showcased in a template, however my version is highly customizable, and it could be displayed all in a single page thru loop (my first version was like this but i've decied to stick to the project, if u want to see it look at some of the previous commits). All of this is possible thanks to **`lazy loading`** and **`asynchronous`** characters loading. It downloades all the data at the beginning, but in a non aggresive way. This way it doesnt throw that many requests at once and also elegantly loads in a waterfall kinda method (see "Network" tab in dev-tools if you want proof for that).
 
 **`(2)`** - Secondly i made searching with the **`url query`** search, i think its way more usefull this way instead of some kind of live searching. Thanks to that users could maybe share link of their searched characters more easily, because search results save with that link, wheres with live searching, it would be really hard to so.
 
-**`(3)`** - Unfortunately there is 1 thing that im not the most proud of in the app. That thing is that searching does not work in the favorites tab, i tried to solve this in many ways, eg. by adding the whole data to array and searching based on array objects or trying to find just right GraphQL query for my needs, but couldn't quite find the right one. I couldn't add the data to array and it seems like there is no right query for my needs (seems like there is no such query to search characters by name + id filters on this one).
+**`(3)`** - Unfortunately there is 1 thing that im not the most proud of in the app. That thing is that searching does not work in the favorites tab, i tried to solve this in many ways, eg. by adding the whole data to array and searching based on array objects or trying to find just right GraphQL query for my needs, but couldn't quite find the right one. I couldn't add the data to array and it seems like there is no right query for my needs (there is no such query to search characters by name + id filters on this one).
 
 ## Bonus Features
 Besides the basic requirements that were needed i've added few things that i thought fit good in there.
@@ -43,4 +44,6 @@ Besides the basic requirements that were needed i've added few things that i tho
 
 **`(10)`** - **`Pagination`** is slightly modified in my version, i thought 4 pages on each side is too much, and took it down to 2 per side, but instead of this i've added buttons that take you to the last and to the first page of all the currently searched characters in range.
 
-**`(11)`** - Last feature is a a bit of advanced **`responsiveness`** with swapping **`grid`** rows with each other to result very eye pleasing usage of the application on mobile. Also the pagination is hidden by default on mobile, and you can show/hide it with a convenient fixed button at the bottom of the screen.
+**`(11)`** - One of the last features is a a bit of advanced **`responsiveness`** with swapping **`grid`** rows with each other to result very eye pleasing usage of the application on mobile. Also the pagination is hidden by default on mobile, and you can show/hide it with a convenient fixed button at the bottom of the screen.
+
+**`(12)`** - And the last one is a **`scalability`**, which is superior. The app is made in a way that even if there were added 1000 characters, the site would still run as good as it runs now, even without changing a single line of code. Which i think was one of the main goals of the task - to create a easily **`maintainable`** and **`scalable`** app.

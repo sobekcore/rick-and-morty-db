@@ -78,7 +78,7 @@ header {
     font-size: 24px;
     margin: auto 0;
 
-    input {
+    #url {
       font: 18px "Poppins", sans-serif;
       padding: 0px 15px;
       color: $blue-400;

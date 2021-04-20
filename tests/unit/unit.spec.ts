@@ -1,7 +1,8 @@
 import { shallowMount } from "@vue/test-utils";
 
-import Navchar from "@/components/navchar.vue";
 import Header from "@/components/header.vue";
+import Navchar from "@/components/navchar.vue";
+import CharInfo from "@/components/char-info.vue";
 import Error from "@/components/error.vue";
 
 // For some reason i cant mount components that has imports
@@ -53,6 +54,12 @@ describe("navchar.vue", () => {
       props: { bool },
     });
     expect(typeof navchar.props("favorite")).toBe("boolean");
+  });
+});
+
+describe("char-info.vue", () => {
+  it("CharInfo component exists", () => {
+    expect(CharInfo);
   });
 });
 
