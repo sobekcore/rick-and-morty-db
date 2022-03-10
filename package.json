@@ -1,5 +1,5 @@
 {
-  "name": "dc-fe-dawid-sobotka",
+  "name": "rick-and-morty-db",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.3.14",
-    "@vue/apollo-composable": "*",
+    "@vue/apollo-composable": "^4.0.0-alpha.12",
     "graphql": "^15.5.0",
     "vue": "^3.0.0",
     "vue-apollo": "^3.0.7"

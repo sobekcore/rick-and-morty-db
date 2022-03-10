@@ -1,11 +1,6 @@
 <template>
-  <div id="error-wrapper">
-    <img
-      id="error-logo"
-      role="banner"
-      alt="Rick &#38; Morty Database"
-      src="../assets/rick-and-morty.svg"
-    />
+  <div id="error-wrapper" role="banner">
+    <img alt="Rick &#38; Morty Database" id="error-logo" src="@/assets/rick-and-morty.svg" />
     <h2 id="error-desc">Sorry, we could not find you character.</h2>
     <a href="/"><button id="go-back">Go back to safety</button></a>
   </div>

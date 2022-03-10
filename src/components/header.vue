@@ -1,12 +1,7 @@
 <template>
-  <header>
+  <header role="banner">
     <a id="link" title="Rick &#38; Morty Database" href="/">
-      <img
-        id="logo"
-        role="banner"
-        alt="Rick &#38; Morty Database"
-        src="../assets/rick-and-morty.svg"
-      />
+      <img id="logo" alt="Rick &#38; Morty Database" src="@/assets/rick-and-morty.svg" />
     </a>
     <section>
       <input
@@ -16,7 +11,7 @@
         v-on:keyup.enter="goToUrl()"
         autocomplete="off"
       />
-      <img id="search" title="Search" role="search" src="../assets/search.svg" @click="goToUrl()" />
+      <img id="search" alt="Search" title="Search" src="@/assets/search.svg" @click="goToUrl()" />
     </section>
     <p id="text">
       Currently there are <span id="count">{{ count }}</span> characters to choose from.
@@ -35,15 +30,17 @@ export default defineComponent({
     },
   },
   methods: {
-    goToUrl: function () {
-      let url = (document.getElementById("url") as HTMLInputElement).value;
-      window.location.search = "=" + url;
+    goToUrl() {
+      const url = document.getElementById("url");
+      if (url instanceof HTMLInputElement) {
+        window.location.search = "=" + url.value;
+      }
     },
   },
   setup() {
     // Using clean search filter & regex to replace placeholder
-    var searchFilter = window.location.search.substr(2);
-    var searchFilterClean = searchFilter.replace(/%20/g, " ");
+    const searchFilter = window.location.search.substr(2);
+    const searchFilterClean = searchFilter.replace(/%20/g, " ");
 
     return { searchFilterClean };
   },
@@ -80,7 +77,7 @@ header {
 
     #url {
       font: 18px "Poppins", sans-serif;
-      padding: 0px 15px;
+      padding: 0 15px;
       color: $blue-400;
       font-weight: 500;
       margin: 5px;

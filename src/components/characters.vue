@@ -1,11 +1,11 @@
 <template>
   <!-- Displaying loading before data is fetched -->
-  <div class="load-wrapper" v-if="!characters && !favorite">
+  <div class="load-wrapper" v-if="loading">
     <h2 class="load">Loading characters...</h2>
   </div>
   <section v-else>
     <ul class="char-list">
-      <li class="char-item" v-for="character in characters" :key="character.id">
+      <li class="char-item" v-for="character in characters.data" :key="character.id">
         <ul class="info-list">
           <CharInfo :character="character" />
           <!-- Add to Favorites -->
@@ -13,19 +13,21 @@
             <!-- Render different button depending if its favorite or not -->
             <div v-if="favorite">
               <img
+                alt="Remove from favorites"
                 title="Remove from favorites"
                 role="button"
                 class="already-favorite"
-                src="../assets/already-favorite.svg"
+                src="@/assets/already-favorite.svg"
                 @click="deleteFavorite(character.id)"
               />
             </div>
             <div v-else>
               <img
+                alt="Add to favorites"
                 title="Add to favorites"
                 role="button"
                 class="is-favorite"
-                src="../assets/favorite.svg"
+                src="@/assets/favorite.svg"
                 @click="saveFavorite(character.id)"
               />
             </div>
@@ -34,27 +36,16 @@
       </li>
     </ul>
   </section>
-
-  <!-- Remove caption after animation -->
-  <h2 class="removed">Removed</h2>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent, reactive } from "vue";
 import { useQuery, useResult } from "@vue/apollo-composable";
 
-// Import Components
-import CharInfo from "./char-info.vue";
+import CharInfo from "@/components/char-info.vue";
 
-// Need to disable TypeScript and ESLint due to relative
-// import bug, not sure how to easily fix this without hacks.
-
-/* eslint-disable */
-// @ts-ignore
-import charactersQuery from "../graphql/characters.query.gql";
-// @ts-ignore
-import favoritesQuery from "../graphql/favorites.query.gql";
-/* eslint-enable */
+import charactersQuery from "@/graphql/characters.query.gql";
+import favoritesQuery from "@/graphql/favorites.query.gql";
 
 export default defineComponent({
   name: "Characters",
@@ -72,77 +63,89 @@ export default defineComponent({
     },
   },
   methods: {
-    saveFavorite: function (id: string) {
+    saveFavorite(id: string) {
       // Get current local storage array and add new character to that
 
       // Removing possibility of duplicates in a favorites array
-      // eslint-disable-next-line
-      let array = Array.from(new Set(JSON.parse(localStorage.getItem("rnmdb-favorite-characters")!)));
+      const storage = String(localStorage.getItem("rnmdb-favorite-characters"));
+      let array = Array.from(new Set(JSON.parse(storage)));
+
       array.push(id);
       localStorage.setItem("rnmdb-favorite-characters", JSON.stringify(Array.from(new Set(array))));
 
+      let buttonIdToChange = 0;
+
       // Calculations on which button to animate
       let ids = document.getElementsByClassName("info-item id");
-      for (var i = 0; i <= ids.length - 1; i++) {
-        var choosed = ids[i].innerHTML;
-
-        if (choosed == id) break;
+      for (let i = 0; i <= ids.length - 1; i++) {
+        let chosen = ids[i].innerHTML;
+        buttonIdToChange = i;
+        if (chosen === id) break;
       }
 
       let fav = document.getElementsByClassName("is-favorite");
-      fav[i].setAttribute("title", "Already favorite");
-      fav[i].className += " active";
+      fav[buttonIdToChange].setAttribute("title", "Already favorite");
+      fav[buttonIdToChange].className += " active";
     },
-    deleteFavorite: function (id: string) {
+    deleteFavorite(id: string) {
       // Get current local storage array and remove certain character from it
-      // eslint-disable-next-line
-      let array = JSON.parse(localStorage.getItem("rnmdb-favorite-characters")!);
+      const storage = String(localStorage.getItem("rnmdb-favorite-characters"));
+      let array = JSON.parse(storage);
 
       let index = array.indexOf(id);
-      if (index > -1) {
-        array.splice(index, 1);
-      }
+      if (index !== -1) array.splice(index, 1);
 
       localStorage.setItem("rnmdb-favorite-characters", JSON.stringify(array));
 
       // Making tricky calculations on which button to animate
       let ids = document.getElementsByClassName("info-item id");
-      for (var i = 0; i <= ids.length - 1; i++) {
-        var choosed = ids[i].innerHTML;
-
-        if (choosed == id) break;
+      for (let i = 0; i <= ids.length - 1; i++) {
+        let chosen = ids[i].innerHTML;
+        if (chosen === id) break;
       }
 
-      let fav = document.getElementsByClassName("already-favorite");
-      fav[i].className += " delete";
-      let removed = document.getElementsByClassName("removed");
-      removed[0].className += " show";
-
-      setTimeout(() => {
-        location.reload();
-      }, 2100);
+      if (this.removeFavoriteCharacter instanceof Function) {
+        this.removeFavoriteCharacter(id);
+      }
     },
   },
-  async setup(props) {
-    if (props.favorite == true) {
+  setup(props) {
+    if (props.favorite === true) {
+      const storage = String(localStorage.getItem("rnmdb-favorite-characters"));
+      const favorites = JSON.parse(storage);
+
       // Show favorite characters
-      // eslint-disable-next-line
-      let favorites = JSON.parse(localStorage.getItem("rnmdb-favorite-characters")!);
+      const { result, loading } = useQuery(favoritesQuery, {
+        favorite: favorites,
+      });
 
-      const { result } = useQuery(favoritesQuery, { favorite: favorites });
-      const characters = useResult(result, null, (data) => data.charactersByIds);
+      const characters = reactive({
+        data: useResult(result, null, (data) => data.charactersByIds),
+      });
 
-      return { characters };
+      const removeFavoriteCharacter = (id: string) => {
+        // TODO: Implement proper Character type and use it throughout the project
+        const filteredData = characters.data.filter((character: any) => character.id !== id);
+        characters.data = computed(() => filteredData);
+      };
+
+      return { characters, loading, removeFavoriteCharacter };
     } else {
       // Get current url search filter
-      var searchFilter = window.location.search.substr(2);
-      var searchFilterClean = searchFilter.replaceAll("%20", " ");
+      const searchFilter = window.location.search.substr(2);
+      const searchFilterClean = searchFilter.replaceAll("%20", " ");
 
       // Show all characters
-      const { result } = useQuery(charactersQuery, { page: props.page, filter: searchFilterClean });
-      const characters = useResult(result, null, (data) => data.characters.results);
+      const { result, loading } = useQuery(charactersQuery, {
+        page: props.page,
+        filter: searchFilterClean,
+      });
 
-      return { characters };
+      const characters = reactive({
+        data: useResult(result, null, (data) => data.characters.results),
+      });
+
+      return { characters, loading };
     }
   },
 });
@@ -196,27 +199,16 @@ section {
           @keyframes fillBlue {
             0% {
               background: white;
-              content: url("../assets/favorite.svg");
+              content: url("~@/assets/favorite.svg");
             }
             100% {
               background: $blue-400;
-              content: url("../assets/already-favorite.svg");
+              content: url("~@/assets/already-favorite.svg");
             }
           }
 
           .already-favorite {
             background: $blue-400;
-          }
-
-          .already-favorite.delete {
-            transition: 4s transform;
-            margin-left: -24px;
-            margin-top: -27px;
-            position: fixed;
-            transform: scale(600);
-            animation-timing-function: ease-in;
-            pointer-events: none;
-            z-index: 99;
           }
 
           .is-favorite:hover,
@@ -258,43 +250,6 @@ section {
     font: 19px "Poppins", sans-serif;
     color: $gray-200;
     padding: 0;
-  }
-}
-
-// -- Removing --
-.removed {
-  display: none;
-  opacity: 0;
-  margin: 0;
-}
-
-.removed.show {
-  font: 44px "Poppins", sans-serif;
-  color: #d14a4a;
-  background: white;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-weight: 500;
-  display: block;
-  position: fixed;
-  z-index: 100;
-  left: 50%;
-  top: 50%;
-  user-select: none;
-  transform: translate(-50%, -50%);
-  animation: 2.4s fadeIn;
-  animation-direction: forwards;
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  33% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
   }
 }
 </style>

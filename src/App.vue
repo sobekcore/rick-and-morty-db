@@ -2,7 +2,7 @@
   <article v-if="information">
     <Header :count="information.count" />
     <!-- Render different active tabs depending on which one is open -->
-    <nav class="navbar" v-if="showFavorites == true">
+    <nav class="navbar" v-if="showFavorites === true">
       <ul class="navbar-list">
         <li class="navbar-item" @click="allCharacters">All Characters</li>
         <li class="navbar-item active" @click="favorites">Favorites</li>
@@ -19,70 +19,62 @@
     <Navchar :favorite="showFavorites" />
     <!-- Display either all characters or favorites -->
     <section v-if="showFavorites">
-      <Suspense>
-        <template #default>
-          <Characters :favorite="true" />
-        </template>
-      </Suspense>
+      <Characters :favorite="true" />
     </section>
     <section v-else>
-      <Suspense>
-        <template #default>
-          <Characters :page="page" :key="page" />
-        </template>
-      </Suspense>
+      <Characters :page="page" :key="page" />
     </section>
 
     <!-- Rendering pagination buttons depending on page states -->
     <nav class="pagination" v-if="!showFavorites">
+      <button class="show-more" @click="showPagination()">Pages...</button>
       <ul class="page-list">
-        <button class="show-more" @click="showPagination()">Pages...</button>
         <!-- Change pages by 1 or all backwards -->
         <li class="page-section">
           <div v-if="page > 1" class="page special" @click="changePage(1)">
-            <img class="pointer" src="./assets/pointer.svg" />
-            <img class="pointer" src="./assets/pointer.svg" />
+            <img alt="Pointer" class="pointer" src="@/assets/pointer.svg" />
+            <img alt="Pointer" class="pointer" src="@/assets/pointer.svg" />
           </div>
           <div v-else class="page special disabled">
-            <img class="pointer" src="./assets/pointer-disabled.svg" />
-            <img class="pointer" src="./assets/pointer-disabled.svg" />
+            <img alt="Pointer" class="pointer" src="@/assets/pointer-disabled.svg" />
+            <img alt="Pointer" class="pointer" src="@/assets/pointer-disabled.svg" />
           </div>
         </li>
         <li class="page-section">
           <div v-if="page > 1" class="page special" @click="changePage(--page)">
-            <img class="pointer" src="./assets/pointer.svg" />
+            <img alt="Pointer" class="pointer" src="@/assets/pointer.svg" />
           </div>
           <div v-else class="page special disabled">
-            <img class="pointer" src="./assets/pointer-disabled.svg" />
+            <img alt="Pointer" class="pointer" src="@/assets/pointer-disabled.svg" />
           </div>
         </li>
         <!-- Change pages by exact number of provided amounts -->
         <li class="page-section" v-for="index in information.pages" :key="index">
-          <div class="page" v-if="index == page - 2" @click="changePage(page - 2)">
+          <div class="page" v-if="index === page - 2" @click="changePage(page - 2)">
             {{ index }}
           </div>
-          <div class="page" v-if="index == page - 1" @click="changePage(page - 1)">
+          <div class="page" v-if="index === page - 1" @click="changePage(page - 1)">
             {{ index }}
           </div>
-          <div class="page active" v-if="index == page">{{ index }}</div>
-          <div class="page" v-if="index == page + 1" @click="changePage(page + 1)">
+          <div class="page active" v-if="index === page">{{ index }}</div>
+          <div class="page" v-if="index === page + 1" @click="changePage(page + 1)">
             {{ index }}
           </div>
-          <div class="page" v-if="index == page + 2" @click="changePage(page + 2)">
+          <div class="page" v-if="index === page + 2" @click="changePage(page + 2)">
             {{ index }}
           </div>
-          <div class="page" v-if="index == page + 5" @click="changePage(page + 5)">...</div>
-          <div class="page" v-if="index == page + 7" @click="changePage(page + 7)">
+          <div class="page spread disabled" v-if="index === page + 5">...</div>
+          <div class="page" v-if="index === page + 7" @click="changePage(page + 7)">
             {{ index }}
           </div>
         </li>
         <!-- Change pages by 1 or all forwards -->
         <li class="page-section">
           <div v-if="page < information.pages" class="page special" @click="changePage(++page)">
-            <img class="pointer-flip" src="./assets/pointer.svg" />
+            <img alt="Pointer" class="pointer-flip" src="@/assets/pointer.svg" />
           </div>
           <div v-else class="page special disabled">
-            <img class="pointer-flip" src="./assets/pointer-disabled.svg" />
+            <img alt="Pointer" class="pointer-flip" src="@/assets/pointer-disabled.svg" />
           </div>
         </li>
         <li class="page-section">
@@ -91,20 +83,21 @@
             class="page special"
             @click="changePage(information.pages)"
           >
-            <img class="pointer-flip" src="./assets/pointer.svg" />
-            <img class="pointer-flip" src="./assets/pointer.svg" />
+            <img alt="Pointer" class="pointer-flip" src="@/assets/pointer.svg" />
+            <img alt="Pointer" class="pointer-flip" src="@/assets/pointer.svg" />
           </div>
           <div v-else class="page special disabled">
-            <img class="pointer-flip" src="./assets/pointer-disabled.svg" />
-            <img class="pointer-flip" src="./assets/pointer-disabled.svg" />
+            <img alt="Pointer" class="pointer-flip" src="@/assets/pointer-disabled.svg" />
+            <img alt="Pointer" class="pointer-flip" src="@/assets/pointer-disabled.svg" />
           </div>
+          <div></div>
         </li>
       </ul>
     </nav>
   </article>
 
   <!-- Error page when no characters are found -->
-  <article v-else-if="!information && loaded">
+  <article v-else-if="!information && error">
     <Error />
   </article>
 
@@ -113,23 +106,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, defineAsyncComponent } from "vue";
+import { defineComponent } from "vue";
 import { useQuery, useResult } from "@vue/apollo-composable";
 
 // Import Components
-import Header from "./components/header.vue";
-import Navchar from "./components/navchar.vue";
-import Error from "./components/error.vue";
+import Header from "@/components/header.vue";
+import Navchar from "@/components/navchar.vue";
+import Characters from "@/components/characters.vue";
+import Error from "@/components/error.vue";
 
-// Asynchronous Characters loading
-const Characters = defineAsyncComponent({
-  loader: () => import("./components/characters.vue" /* webpackChunkName: "characters" */),
-  delay: 100,
-});
-
-// eslint-disable-next-line
-// @ts-ignore
-import informationQuery from "./graphql/information.query.gql";
+import informationQuery from "@/graphql/information.query.gql";
 
 export default defineComponent({
   name: "App",
@@ -142,51 +128,51 @@ export default defineComponent({
   data() {
     return {
       showFavorites: false,
-      loaded: false,
       page: 1,
     };
   },
   methods: {
-    allCharacters: function () {
+    allCharacters() {
       this.showFavorites = false;
       document.cookie = "showFavorites = false;";
     },
-    favorites: function () {
+    favorites() {
       this.showFavorites = true;
       document.cookie = "showFavorites = true;";
     },
-    changePage: function (page: number) {
+    changePage(page: number) {
       this.page = page;
     },
-    showPagination: function () {
+    showPagination() {
       // Pagination on mobile toggle
-      let show = document.getElementsByClassName("show-more");
-      if (show[0].className == "show-more") {
-        show[0].className = "show-more active";
-      } else {
-        show[0].className = "show-more";
+      let show = document.querySelector(".page-list");
+
+      if (show instanceof HTMLUListElement) {
+        if (show.className === "page-list") {
+          show.className = "page-list active";
+        } else {
+          show.className = "page-list";
+        }
       }
     },
   },
   mounted() {
     // Loads last page visited by user from cookies
-    let bool = document.cookie.substr(14) == "true";
-    this.showFavorites = bool;
 
-    // If cant show characters display error after delay
-    setTimeout(() => (this.loaded = true), 1400);
+    // TODO: Implement proper cookie system to get and set actual cookie values
+    this.showFavorites = document.cookie.substr(14) === "true";
   },
   setup() {
     // Get current url search filter after ?="", and
     // clean it up by removing spacebar url encoding
-    var searchFilter = window.location.search.substr(2);
-    var searchFilterClean = searchFilter.replaceAll("%20", " ");
+    const searchFilter = window.location.search.substr(2);
+    const searchFilterClean = searchFilter.replaceAll("%20", " ");
 
     // Getting right number of pages
-    const { result } = useQuery(informationQuery, { filter: searchFilterClean });
+    const { result, error } = useQuery(informationQuery, { filter: searchFilterClean });
     const information = useResult(result, null, (data) => data.characters.info);
 
-    return { information };
+    return { information, error };
   },
 });
 </script>
@@ -226,8 +212,6 @@ article {
       }
 
       @media (max-width: $mobile-breakpoint) {
-        // Navbar column direction in case of
-        // adding more tabs to the navigation
         flex-direction: column;
         align-items: center;
         border-bottom: 2px solid $gray-100;
@@ -256,10 +240,6 @@ article {
       margin: 0 0 0 60px;
       padding: 0;
 
-      .show-more {
-        display: none;
-      }
-
       .page-section {
         display: inline-block;
         user-select: none;
@@ -273,14 +253,14 @@ article {
           font-weight: 500;
           color: $gray-200;
           text-align: center;
-          cursor: pointer;
           width: 48px;
           transition: 0.18s box-shadow, 0.25s border;
         }
 
-        .page:hover {
+        .page:not(.disabled):hover {
           box-shadow: 0 0 12px $blue-400;
           border: 2px solid $blue-400;
+          cursor: pointer;
         }
 
         .page.special {
@@ -298,37 +278,45 @@ article {
           border: 2px solid $blue-400;
           color: white;
         }
+
+        .page.disabled {
+          filter: brightness(85%) opacity(45%);
+        }
       }
 
-      @media (max-width: 899px) {
+      @media (max-width: $tablet-breakpoint) {
         text-align: center;
         margin-left: 0;
       }
 
       @media (max-width: $mobile-breakpoint) {
-        .show-more {
+        display: none;
+
+        &.active {
           display: block;
-          font: 21px "Poppins", sans-serif;
-          color: $blue-400;
-          padding: 15px 0;
-          width: 100%;
-          background: none;
-          border: none;
-          outline: none;
-          margin-top: -24px;
-          margin-bottom: -24px;
+          margin-top: 24px;
         }
+      }
+    }
 
-        .show-more.active {
-          margin-bottom: 8px;
-        }
+    .show-more {
+      display: none;
 
-        .page-section {
-          display: none;
-        }
+      @media (max-width: $mobile-breakpoint) {
+        display: block;
+        font: 21px "Poppins", sans-serif;
+        color: $blue-400;
+        padding: 15px 0;
+        width: 100%;
+        background: none;
+        border: none;
+        outline: none;
+        margin-top: -24px;
+        margin-bottom: -24px;
+        cursor: pointer;
 
-        .show-more.active ~ .page-section {
-          display: inline-block;
+        &:hover {
+          cursor: pointer;
         }
       }
     }

@@ -11,7 +11,7 @@ import Error from "@/components/error.vue";
 // would be much more advanced than that of course.
 
 describe("header.vue", () => {
-  it("Header component exists", () => {
+  test("Header component exists", () => {
     expect(Header);
   });
 
@@ -25,26 +25,26 @@ describe("header.vue", () => {
     },
   });
 
-  it("Is a passed props a number", () => {
+  test("Is a passed props a number", () => {
     expect(typeof header.props("count")).toBe("number");
   });
 
-  it("Is number in range of 1 and 671", () => {
+  test("Is number in range of 1 and 671", () => {
     expect(header.props("count")).toBeGreaterThanOrEqual(1);
     expect(header.props("count")).toBeLessThanOrEqual(max);
   });
 
-  it("Proper number showcase", () => {
+  test("Proper number showcase", () => {
     expect(header.text()).toMatch(String(rand));
   });
 });
 
 describe("navchar.vue", () => {
-  it("Navchar component exists", () => {
+  test("Navchar component exists", () => {
     expect(Navchar);
   });
 
-  it("Is a passed props a boolean", () => {
+  test("Is a passed props a boolean", () => {
     const rand = Math.floor(Math.random() * 2);
     let bool = null;
     if (rand == 1) bool = true;
@@ -58,13 +58,13 @@ describe("navchar.vue", () => {
 });
 
 describe("char-info.vue", () => {
-  it("CharInfo component exists", () => {
+  test("CharInfo component exists", () => {
     expect(CharInfo);
   });
 });
 
 describe("error.vue", () => {
-  it("Error component exists", () => {
+  test("Error component exists", () => {
     expect(Error);
   });
 });
