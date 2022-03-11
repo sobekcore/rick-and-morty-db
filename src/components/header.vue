@@ -8,7 +8,7 @@
         id="url"
         :value="searchFilterClean"
         placeholder="Search for characters..."
-        v-on:keyup.enter="goToUrl()"
+        @keyup.enter="goToUrl()"
         autocomplete="off"
       />
       <img id="search" alt="Search" title="Search" src="@/assets/search.svg" @click="goToUrl()" />

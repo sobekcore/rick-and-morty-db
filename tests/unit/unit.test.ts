@@ -2,13 +2,8 @@ import { shallowMount } from "@vue/test-utils";
 
 import Header from "@/components/header.vue";
 import Navchar from "@/components/navchar.vue";
-import CharInfo from "@/components/char-info.vue";
+import Character from "@/components/character.vue";
 import Error from "@/components/error.vue";
-
-// For some reason i cant mount components that has imports
-// outside of "vue" ones in it, because of that i cant
-// really precisly test my components, otherwise the tests
-// would be much more advanced than that of course.
 
 describe("header.vue", () => {
   test("Header component exists", () => {
@@ -57,9 +52,9 @@ describe("navchar.vue", () => {
   });
 });
 
-describe("char-info.vue", () => {
-  test("CharInfo component exists", () => {
-    expect(CharInfo);
+describe("character.vue", () => {
+  test("Character component exists", () => {
+    expect(Character);
   });
 });
 

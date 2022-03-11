@@ -28,22 +28,20 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-section {
-  #keys-list {
-    font: 18px "Poppins", sans-serif;
-    font-weight: 500;
-    list-style-type: none;
-    color: $gray-200;
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    background: $gray-100;
-    text-align: center;
-    padding: 12px 0;
-    margin: 0 0 3px 0;
+#keys-list {
+  font: 18px "Poppins", sans-serif;
+  font-weight: 500;
+  list-style-type: none;
+  color: $gray-200;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: $gray-100;
+  text-align: center;
+  padding: 12px 0;
+  margin: 0 0 3px 0;
 
-    @media (max-width: $mobile-breakpoint) {
-      display: none;
-    }
+  @media (max-width: $mobile-breakpoint) {
+    display: none;
   }
 }
 </style>

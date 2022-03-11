@@ -3,36 +3,16 @@
   <div class="load-wrapper" v-if="loading">
     <h2 class="load">Loading characters...</h2>
   </div>
+
   <section v-else>
     <ul class="char-list">
       <li class="char-item" v-for="character in characters.data" :key="character.id">
-        <ul class="info-list">
-          <CharInfo :character="character" />
-          <!-- Add to Favorites -->
-          <li class="info-item favorite">
-            <!-- Render different button depending if its favorite or not -->
-            <div v-if="favorite">
-              <img
-                alt="Remove from favorites"
-                title="Remove from favorites"
-                role="button"
-                class="already-favorite"
-                src="@/assets/already-favorite.svg"
-                @click="deleteFavorite(character.id)"
-              />
-            </div>
-            <div v-else>
-              <img
-                alt="Add to favorites"
-                title="Add to favorites"
-                role="button"
-                class="is-favorite"
-                src="@/assets/favorite.svg"
-                @click="saveFavorite(character.id)"
-              />
-            </div>
-          </li>
-        </ul>
+        <Character
+          :character="character"
+          :favorite="favorite"
+          @saveFavorite="saveFavorite($event)"
+          @deleteFavorite="deleteFavorite($event)"
+        />
       </li>
     </ul>
   </section>
@@ -42,7 +22,7 @@
 import { computed, defineComponent, reactive } from "vue";
 import { useQuery, useResult } from "@vue/apollo-composable";
 
-import CharInfo from "@/components/char-info.vue";
+import Character from "@/components/character.vue";
 
 import charactersQuery from "@/graphql/characters.query.gql";
 import favoritesQuery from "@/graphql/favorites.query.gql";
@@ -50,7 +30,7 @@ import favoritesQuery from "@/graphql/favorites.query.gql";
 export default defineComponent({
   name: "Characters",
   components: {
-    CharInfo,
+    Character,
   },
   props: {
     page: {
@@ -83,9 +63,10 @@ export default defineComponent({
         if (chosen === id) break;
       }
 
+      // TODO: Make favorite characters to be already marked as favorite at the beginning
       let fav = document.getElementsByClassName("is-favorite");
       fav[buttonIdToChange].setAttribute("title", "Already favorite");
-      fav[buttonIdToChange].className += " active";
+      fav[buttonIdToChange].className += " is-active";
     },
     deleteFavorite(id: string) {
       // Get current local storage array and remove certain character from it
@@ -152,92 +133,42 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-section {
-  // -- Characters --
-  .char-list {
-    display: grid;
-    grid-template-columns: 1fr;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+.char-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 
-    .char-item {
-      border-bottom: 2px solid $gray-100;
-      background: white;
-      max-width: 100%;
-      margin: 3px 0;
-      padding: 4px 0;
+  .char-item {
+    border-bottom: 2px solid $gray-100;
+    background: white;
+    max-width: 100%;
+    margin: 3px 0;
+    padding: 4px 0;
+
+    .info-list {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      font: 18px "Poppins", sans-serif;
+      color: $gray-200;
+      list-style-type: none;
+      align-items: center;
+      text-align: center;
+      padding: 0;
+    }
+
+    @media (max-width: $mobile-breakpoint) {
+      margin: 0;
+      padding: 12px 0;
 
       .info-list {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        font: 18px "Poppins", sans-serif;
-        color: $gray-200;
-        list-style-type: none;
-        align-items: center;
-        text-align: center;
-        padding: 0;
-
-        .info-item {
-          // Diferent styling on favorite buttons depending on location
-          .is-favorite,
-          .already-favorite {
-            height: 46px;
-            min-width: 47px;
-            padding: 10px;
-            border: 2px solid $blue-400;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.2s transform;
-          }
-
-          .is-favorite.active {
-            animation: 0.9s fillBlue;
-            animation-fill-mode: forwards;
-          }
-
-          @keyframes fillBlue {
-            0% {
-              background: white;
-              content: url("~@/assets/favorite.svg");
-            }
-            100% {
-              background: $blue-400;
-              content: url("~@/assets/already-favorite.svg");
-            }
-          }
-
-          .already-favorite {
-            background: $blue-400;
-          }
-
-          .is-favorite:hover,
-          .already-favorite:hover {
-            transform: scale(1.25);
-          }
-        }
-      }
-
-      @media (max-width: $mobile-breakpoint) {
-        margin: 0;
-        padding: 12px 0;
-
-        .info-list {
-          grid-template-columns: 1fr;
-
-          .info-item.favorite::before {
-            content: "Favorite?";
-            line-height: 34px;
-            display: block;
-            margin-top: 10px;
-          }
-        }
+        grid-template-columns: 1fr;
       }
     }
   }
 }
 
-// -- Loading --
 .load-wrapper {
   display: flex;
   align-items: center;

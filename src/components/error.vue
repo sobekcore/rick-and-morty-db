@@ -1,7 +1,7 @@
 <template>
   <div id="error-wrapper" role="banner">
     <img alt="Rick &#38; Morty Database" id="error-logo" src="@/assets/rick-and-morty.svg" />
-    <h2 id="error-desc">Sorry, we could not find you character.</h2>
+    <h2 id="error-desc">{{ message }}</h2>
     <a href="/"><button id="go-back">Go back to safety</button></a>
   </div>
 </template>
@@ -11,6 +11,12 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Error",
+  props: {
+    message: {
+      type: String,
+      default: "Something went wrong",
+    },
+  },
 });
 </script>
 
