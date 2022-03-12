@@ -14,7 +14,7 @@
       <Characters :favorite="true" />
     </section>
     <section v-else>
-      <Characters :page="page" :key="page" />
+      <Characters :key="page" :page="page" />
     </section>
 
     <Pagination :information="information" :showFavorites="showFavorites" @page="setPage($event)" />
@@ -22,10 +22,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, Ref, ref } from "vue";
 import { useQuery, useResult } from "@vue/apollo-composable";
+import { Cookies } from "@/services/enums";
+import { getSearchedValueFromUrl } from "@/services/search";
+import { getCookieByName, saveCookieByName } from "@/services/cookies";
 
-// Import Components
 import Header from "@/components/header.vue";
 import Navbar from "@/components/navbar.vue";
 import Navchar from "@/components/navchar.vue";
@@ -47,25 +49,23 @@ export default defineComponent({
   },
   setup() {
     // Page reactive value and setter
-    const page = ref(1);
-    const setPage = (target: number) => {
+    const page: Ref<number> = ref(1);
+    const setPage = (target: number): void => {
       page.value = target;
     };
 
     // Show favorites reactive value and setter
-    // TODO: Implement proper cookie system to get and set actual cookie values
-    const showFavorites = ref(document.cookie.substr(14) === "true");
-    const setShowFavorites = (show: boolean) => {
+    const showFavorites: Ref<boolean> = ref(getCookieByName(Cookies.SHOW_FAVORITES) === "true");
+    const setShowFavorites = (show: boolean): void => {
       showFavorites.value = show;
-      document.cookie = `showFavorites = ${show};`;
+      saveCookieByName(Cookies.SHOW_FAVORITES, String(show), 30);
     };
 
-    // Get current url search filter after ?="", and clean it up by removing space bar url encoding
-    const searchFilter = window.location.search.substr(2);
-    const searchFilterClean = searchFilter.replaceAll("%20", " ");
+    // Get current url search filter
+    const searchFilter: string = getSearchedValueFromUrl();
 
     // Getting right number of pages
-    const { result, error } = useQuery(informationQuery, { filter: searchFilterClean });
+    const { result, error } = useQuery(informationQuery, { filter: searchFilter });
     const information = useResult(result, null, (data) => data.characters.info);
 
     return {

@@ -28,10 +28,14 @@ export default defineComponent({
       type: Boolean,
     },
   },
-  methods: {
-    setShowFavorites(show: boolean) {
-      this.$emit("showFavorites", show);
-    },
+  setup(props, context) {
+    const setShowFavorites = (show: boolean): void => {
+      context.emit("showFavorites", show);
+    };
+
+    return {
+      setShowFavorites,
+    };
   },
 });
 </script>

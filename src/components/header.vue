@@ -6,7 +6,8 @@
     <section>
       <input
         id="url"
-        :value="searchFilterClean"
+        ref="search"
+        :value="searchFilter"
         placeholder="Search for characters..."
         @keyup.enter="goToUrl()"
         autocomplete="off"
@@ -20,7 +21,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, Ref, ref } from "vue";
+import { Search } from "@/services/enums";
+import { getSearchedValueFromUrl } from "@/services/search";
 
 export default defineComponent({
   name: "Header",
@@ -29,20 +32,25 @@ export default defineComponent({
       type: Number,
     },
   },
-  methods: {
-    goToUrl() {
-      const url = document.getElementById("url");
-      if (url instanceof HTMLInputElement) {
-        window.location.search = "=" + url.value;
-      }
-    },
-  },
   setup() {
-    // Using clean search filter & regex to replace placeholder
-    const searchFilter = window.location.search.substr(2);
-    const searchFilterClean = searchFilter.replace(/%20/g, " ");
+    const search: Ref<HTMLElement | null> = ref(null);
 
-    return { searchFilterClean };
+    // Search characters with given name
+    const goToUrl = (): void => {
+      const url: HTMLElement | null = search.value;
+      if (url instanceof HTMLInputElement) {
+        window.location.search = Search.QUERY_SUFFIX + url.value;
+      }
+    };
+
+    // Using cleaned search filter replace placeholder
+    const searchFilter: string = getSearchedValueFromUrl();
+
+    return {
+      search,
+      goToUrl,
+      searchFilter,
+    };
   },
 });
 </script>
@@ -110,7 +118,7 @@ header {
     }
   }
 
-  @media (max-width: 1319px) {
+  @media (max-width: $desktop-breakpoint) {
     grid-template-columns: 1fr;
     height: auto;
 
@@ -121,13 +129,17 @@ header {
     }
 
     section {
-      margin: 0 20vw;
+      margin: 0 auto;
+      max-width: 550px;
+      width: 100%;
     }
   }
 
   @media (max-width: $mobile-breakpoint) {
     section {
-      margin: 0 20px;
+      margin: 0 10vw;
+      max-width: initial;
+      width: auto;
     }
 
     #text {

@@ -2,7 +2,7 @@
   <!-- Rendering pagination buttons depending on page states -->
   <nav class="pagination" v-if="!showFavorites">
     <button class="show-more" @click="showPagination()">Pages...</button>
-    <ul class="page-list">
+    <ul ref="pagination" class="page-list">
       <!-- Change pages by 1 or all backwards -->
       <li class="page-section">
         <div v-if="page > 1" class="page special" @click="changePage(1)">
@@ -76,7 +76,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, Ref, ref } from "vue";
 
 export default defineComponent({
   name: "Pagination",
@@ -89,28 +89,30 @@ export default defineComponent({
       type: Boolean,
     },
   },
-  data() {
-    return {
-      page: 1,
+  setup(props, context) {
+    // Page reactive value and setter
+    const page: Ref<number> = ref(1);
+    const changePage = (target: number): void => {
+      page.value = target;
+      context.emit("page", target);
     };
-  },
-  methods: {
-    changePage(page: number) {
-      this.page = page;
-      this.$emit("page", page);
-    },
-    showPagination() {
-      // Pagination on mobile toggle
-      let show = document.querySelector(".page-list");
 
-      if (show instanceof HTMLUListElement) {
-        if (show.className === "page-list") {
-          show.className = "page-list is-active";
-        } else {
-          show.className = "page-list";
-        }
-      }
-    },
+    // Show pagination toggle method
+    const pagination: Ref<HTMLElement | null> = ref(null);
+    const showPagination = (): void => {
+      const show: HTMLElement | null = pagination.value;
+      if (!show) return;
+
+      const isActive: boolean = show.className.includes("is-active");
+      show.className = isActive ? "page-list" : "page-list is-active";
+    };
+
+    return {
+      page,
+      changePage,
+      pagination,
+      showPagination,
+    };
   },
 });
 </script>

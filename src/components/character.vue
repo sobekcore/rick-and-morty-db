@@ -1,7 +1,7 @@
 <template>
   <ul class="info-list">
     <!-- Photo & Status -->
-    <li v-if="character.status === 'Alive'" class="info-item">
+    <li v-if="character.status === Enums.Character.STATUS_ALIVE" class="info-item">
       <img alt="Character Image" class="photo" :src="character.image" />
     </li>
     <li v-else class="info-item">
@@ -16,13 +16,13 @@
     <li class="info-item name">{{ character.name }}</li>
 
     <!-- Gender -->
-    <li v-if="character.gender === 'Male'" class="info-item gender">
+    <li v-if="character.gender === Enums.Character.GENDER_MALE" class="info-item gender">
       <img alt="Male" src="@/assets/male.svg" />{{ character.gender }}
     </li>
-    <li v-else-if="character.gender === 'Female'" class="info-item gender">
+    <li v-else-if="character.gender === Enums.Character.GENDER_FEMALE" class="info-item gender">
       <img alt="Female" src="@/assets/female.svg" />{{ character.gender }}
     </li>
-    <li v-else-if="character.gender === 'Genderless'" class="info-item gender">
+    <li v-else-if="character.gender === Enums.Character.GENDER_GENDERLESS" class="info-item gender">
       <img alt="Genderless" class="genderless" src="@/assets/genderless.svg" />
       {{ character.gender }}
     </li>
@@ -66,6 +66,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { Character } from "@/services/enums";
 
 export default defineComponent({
   name: "Information",
@@ -78,13 +79,24 @@ export default defineComponent({
       type: Boolean,
     },
   },
-  methods: {
-    saveFavorite(id: string) {
-      this.$emit("saveFavorite", id);
-    },
-    deleteFavorite(id: string) {
-      this.$emit("deleteFavorite", id);
-    },
+  setup(props, context) {
+    const Enums = {
+      Character: Character,
+    };
+
+    const saveFavorite = (id: string): void => {
+      context.emit("saveFavorite", id);
+    };
+
+    const deleteFavorite = (id: string): void => {
+      context.emit("deleteFavorite", id);
+    };
+
+    return {
+      Enums,
+      saveFavorite,
+      deleteFavorite,
+    };
   },
 });
 </script>
@@ -102,9 +114,10 @@ export default defineComponent({
 
   .unknown {
     transform: translate(-5px, -5px);
+    margin-left: 5px;
   }
 
-  .info-item.gender.capitalize {
+  &.capitalize {
     text-transform: capitalize;
   }
 }
