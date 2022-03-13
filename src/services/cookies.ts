@@ -1,3 +1,4 @@
+import { Time } from "@/services/enums";
 import { getTimeByUnit } from "@/services/time";
 
 const getCookieByName = (name: string): string => {
@@ -11,7 +12,7 @@ const getCookieByName = (name: string): string => {
 
 const saveCookieByName = (name: string, value: string, expire: number): void => {
   const date = new Date();
-  date.setTime(date.getTime() + getTimeByUnit("day", expire));
+  date.setTime(date.getTime() + getTimeByUnit(Time.UNIT_DAY, expire));
 
   const expires = `expires=${date.toUTCString()}`;
   document.cookie = `${name}=${value}; ${expires};`;

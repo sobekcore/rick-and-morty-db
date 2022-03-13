@@ -1,13 +1,18 @@
-type unit = "second" | "minute" | "hour" | "day" | "week";
+import { Time } from "@/services/enums";
 
-const getTimeByUnit = (unit: unit, amount: number) => {
-  const second = 1000;
-  const minute = second * 60;
-  const hour = minute * 60;
-  const day = hour * 24;
-  const week = day * 7;
+type unit = Time.UNIT_SECOND | Time.UNIT_MINUTE | Time.UNIT_HOUR | Time.UNIT_DAY | Time.UNIT_WEEK;
 
-  return eval(unit) * amount;
+const getTimeByUnit = (unit: unit, amount: number): number => {
+  const t: Record<string, number> = {};
+
+  t[Time.UNIT_SECOND] = 1000;
+  t[Time.UNIT_MINUTE] = t[Time.UNIT_SECOND] * 60;
+  t[Time.UNIT_HOUR] = t[Time.UNIT_MINUTE] * 60;
+  t[Time.UNIT_DAY] = t[Time.UNIT_HOUR] * 24;
+  t[Time.UNIT_WEEK] = t[Time.UNIT_DAY] * 7;
+
+  return t[unit] * amount;
 };
 
+export type { unit };
 export { getTimeByUnit };

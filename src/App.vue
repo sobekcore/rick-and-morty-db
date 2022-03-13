@@ -48,23 +48,19 @@ export default defineComponent({
     Error,
   },
   setup() {
-    // Page reactive value and setter
     const page: Ref<number> = ref(1);
     const setPage = (target: number): void => {
       page.value = target;
     };
 
-    // Show favorites reactive value and setter
     const showFavorites: Ref<boolean> = ref(getCookieByName(Cookies.SHOW_FAVORITES) === "true");
     const setShowFavorites = (show: boolean): void => {
       showFavorites.value = show;
       saveCookieByName(Cookies.SHOW_FAVORITES, String(show), 30);
     };
 
-    // Get current url search filter
     const searchFilter: string = getSearchedValueFromUrl();
 
-    // Getting right number of pages
     const { result, error } = useQuery(informationQuery, { filter: searchFilter });
     const information = useResult(result, null, (data) => data.characters.info);
 

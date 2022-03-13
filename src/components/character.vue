@@ -1,12 +1,15 @@
 <template>
-  <ul class="info-list">
+  <ul class="info-list" :data-id="character.id">
     <!-- Photo & Status -->
-    <li v-if="character.status === Enums.Character.STATUS_ALIVE" class="info-item">
+    <li v-if="character.status === Enums.Characters.STATUS_ALIVE" class="info-item">
       <img alt="Character Image" class="photo" :src="character.image" />
     </li>
-    <li v-else class="info-item">
-      <img alt="Character Image" class="photo dead" :src="character.image" />
+    <li v-else-if="character.status === Enums.Characters.STATUS_DEAD" class="info-item">
+      <img alt="Character Image" class="photo grayed" :src="character.image" />
       <img alt="Ribbon" class="ribbon" src="@/assets/ribbon.svg" />
+    </li>
+    <li v-else-if="character.status === Enums.Characters.TYPE_UNKNOWN" class="info-item">
+      <img alt="Character Image" class="photo grayed" :src="character.image" />
     </li>
 
     <!-- Character ID -->
@@ -16,22 +19,31 @@
     <li class="info-item name">{{ character.name }}</li>
 
     <!-- Gender -->
-    <li v-if="character.gender === Enums.Character.GENDER_MALE" class="info-item gender">
-      <img alt="Male" src="@/assets/male.svg" />{{ character.gender }}
+    <li v-if="character.gender === Enums.Characters.GENDER_MALE" class="info-item gender">
+      <img alt="Male" src="@/assets/male.svg" />
+      <span>{{ character.gender }}</span>
     </li>
-    <li v-else-if="character.gender === Enums.Character.GENDER_FEMALE" class="info-item gender">
-      <img alt="Female" src="@/assets/female.svg" />{{ character.gender }}
+    <li v-else-if="character.gender === Enums.Characters.GENDER_FEMALE" class="info-item gender">
+      <img alt="Female" src="@/assets/female.svg" />
+      <span>{{ character.gender }}</span>
     </li>
-    <li v-else-if="character.gender === Enums.Character.GENDER_GENDERLESS" class="info-item gender">
+    <li
+      v-else-if="character.gender === Enums.Characters.GENDER_GENDERLESS"
+      class="info-item gender"
+    >
       <img alt="Genderless" class="genderless" src="@/assets/genderless.svg" />
-      {{ character.gender }}
+      <span>{{ character.gender }}</span>
     </li>
-    <li v-else class="info-item gender capitalize">
-      <img alt="Unknown" class="unknown" src="@/assets/unknown.svg" />{{ character.gender }}
+    <li
+      v-else-if="character.gender === Enums.Characters.TYPE_UNKNOWN"
+      class="info-item gender capitalize"
+    >
+      <img alt="Unknown" class="unknown" src="@/assets/unknown.svg" />
+      <span>{{ character.gender }}</span>
     </li>
 
     <!-- Species -->
-    <li class="info-item species">{{ character.species }}</li>
+    <li class="info-item species capitalize">{{ character.species }}</li>
 
     <!-- Last Episode -->
     <li class="info-item episode">
@@ -65,8 +77,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { Character } from "@/services/enums";
+import { defineComponent, onMounted } from "vue";
+import { Characters } from "@/services/enums";
+import { getAllFavoriteCharactersFromStorage } from "@/services/storage";
+import { makeCharacterButtonActiveById } from "@/services/characters";
 
 export default defineComponent({
   name: "Information",
@@ -80,9 +94,7 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const Enums = {
-      Character: Character,
-    };
+    const Enums = { Characters };
 
     const saveFavorite = (id: string): void => {
       context.emit("saveFavorite", id);
@@ -91,6 +103,16 @@ export default defineComponent({
     const deleteFavorite = (id: string): void => {
       context.emit("deleteFavorite", id);
     };
+
+    onMounted((): void => {
+      if (props.character && !props.favorite) {
+        const favorites: Array<string> = getAllFavoriteCharactersFromStorage();
+
+        if (favorites.includes(props.character.id)) {
+          makeCharacterButtonActiveById(props.character.id, true);
+        }
+      }
+    });
 
     return {
       Enums,
@@ -110,15 +132,12 @@ export default defineComponent({
 
   .genderless {
     transform: translate(-5px, 1px);
+    margin-left: 5px;
   }
 
   .unknown {
     transform: translate(-5px, -5px);
     margin-left: 5px;
-  }
-
-  &.capitalize {
-    text-transform: capitalize;
   }
 }
 
@@ -134,11 +153,7 @@ export default defineComponent({
     transform: translate(-12px, -3px);
   }
 
-  .photo.dead {
-    filter: grayscale(100%) contrast(0.6) brightness(1.2);
-  }
-
-  // Diferent styling on favorite buttons depending on location
+  // Different styling on favorite buttons depending on location
   .is-favorite,
   .already-favorite {
     height: 46px;
@@ -152,6 +167,11 @@ export default defineComponent({
 
   .is-favorite.is-active {
     animation: 0.9s fillBlue;
+    animation-fill-mode: forwards;
+  }
+
+  .is-favorite.is-active-on-boot {
+    animation: 0s fillBlue;
     animation-fill-mode: forwards;
   }
 

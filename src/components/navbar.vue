@@ -5,13 +5,13 @@
         :class="['navbar-item', !showFavorites ? 'is-active' : '']"
         @click="setShowFavorites(false)"
       >
-        All Characters
+        <span>All Characters</span>
       </li>
       <li
         :class="['navbar-item', showFavorites ? 'is-active' : '']"
         @click="setShowFavorites(true)"
       >
-        Favorites
+        <span>Favorites</span>
       </li>
     </ul>
   </nav>

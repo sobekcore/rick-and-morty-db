@@ -9,10 +9,16 @@
         ref="search"
         :value="searchFilter"
         placeholder="Search for characters..."
-        @keyup.enter="goToUrl()"
+        @keyup.enter="goToUrlWithQuery"
         autocomplete="off"
       />
-      <img id="search" alt="Search" title="Search" src="@/assets/search.svg" @click="goToUrl()" />
+      <img
+        id="search"
+        alt="Search"
+        title="Search"
+        src="@/assets/search.svg"
+        @click="goToUrlWithQuery"
+      />
     </section>
     <p id="text">
       Currently there are <span id="count">{{ count }}</span> characters to choose from.
@@ -35,20 +41,20 @@ export default defineComponent({
   setup() {
     const search: Ref<HTMLElement | null> = ref(null);
 
-    // Search characters with given name
-    const goToUrl = (): void => {
-      const url: HTMLElement | null = search.value;
-      if (url instanceof HTMLInputElement) {
-        window.location.search = Search.QUERY_SUFFIX + url.value;
+    const goToUrlWithQuery = (): void => {
+      const searchElement: HTMLElement | null = search.value;
+
+      if (searchElement instanceof HTMLInputElement) {
+        window.location.search = Search.QUERY_SUFFIX + searchElement.value;
       }
     };
 
-    // Using cleaned search filter replace placeholder
+    // Using cleaned search filter to replace placeholder
     const searchFilter: string = getSearchedValueFromUrl();
 
     return {
       search,
-      goToUrl,
+      goToUrlWithQuery,
       searchFilter,
     };
   },
@@ -56,6 +62,8 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+// TODO: Refactor styling in the whole application and rename badly named
+//  selectors, as well as create selectors for styles targeted by element names
 header {
   display: grid;
   grid-template-columns: 380px 500px auto;

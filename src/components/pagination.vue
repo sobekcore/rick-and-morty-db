@@ -2,6 +2,7 @@
   <!-- Rendering pagination buttons depending on page states -->
   <nav class="pagination" v-if="!showFavorites">
     <button class="show-more" @click="showPagination()">Pages...</button>
+
     <ul ref="pagination" class="page-list">
       <!-- Change pages by 1 or all backwards -->
       <li class="page-section">
@@ -90,21 +91,20 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    // Page reactive value and setter
     const page: Ref<number> = ref(1);
     const changePage = (target: number): void => {
       page.value = target;
       context.emit("page", target);
     };
 
-    // Show pagination toggle method
     const pagination: Ref<HTMLElement | null> = ref(null);
     const showPagination = (): void => {
-      const show: HTMLElement | null = pagination.value;
-      if (!show) return;
+      const paginationElement: HTMLElement | null = pagination.value;
 
-      const isActive: boolean = show.className.includes("is-active");
-      show.className = isActive ? "page-list" : "page-list is-active";
+      if (paginationElement instanceof HTMLElement) {
+        const isActive: boolean = paginationElement.className.includes("is-active");
+        paginationElement.className = isActive ? "page-list" : "page-list is-active";
+      }
     };
 
     return {

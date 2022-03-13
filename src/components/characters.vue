@@ -7,7 +7,7 @@
   <section v-else>
     <ul class="char-list">
       <li class="char-item" v-for="character in characters.data" :key="character.id">
-        <Character
+        <CharacterComponent
           :character="character"
           :favorite="favorite"
           @saveFavorite="saveFavorite($event)"
@@ -20,19 +20,27 @@
 
 <script lang="ts">
 import { computed, defineComponent, reactive } from "vue";
-import { useQuery, useResult } from "@vue/apollo-composable";
-import { LocalStorage } from "@/services/enums";
 import { getSearchedValueFromUrl } from "@/services/search";
 
-import Character from "@/components/character.vue";
+import {
+  Character,
+  getAllCharacters,
+  getAllFavoriteCharacters,
+  makeCharacterButtonActiveById,
+} from "@/services/characters";
 
-import charactersQuery from "@/graphql/characters.query.gql";
-import favoritesQuery from "@/graphql/favorites.query.gql";
+import {
+  getAllFavoriteCharactersFromStorage,
+  removeFavoriteCharacterFromStorage,
+  saveFavoriteCharacterToStorage,
+} from "@/services/storage";
+
+import CharacterComponent from "@/components/character.vue";
 
 export default defineComponent({
   name: "Characters",
   components: {
-    Character,
+    CharacterComponent,
   },
   props: {
     page: {
@@ -45,40 +53,20 @@ export default defineComponent({
     },
   },
   setup(props) {
-    // TODO: Create new service characters and move this logic into its methods
-    if (props.favorite === true) {
-      const storage = String(localStorage.getItem(LocalStorage.FAVORITE_CHARACTERS));
-      const favorites = JSON.parse(storage);
+    if (props.favorite) {
+      const favorites: Array<string> = getAllFavoriteCharactersFromStorage();
 
-      // Show favorite characters
-      const { result, loading } = useQuery(favoritesQuery, {
-        favorite: favorites,
-      });
+      const { data, loading } = getAllFavoriteCharacters(favorites);
+      const characters = reactive({ data });
 
-      const characters = reactive({
-        data: useResult(result, null, (data) => data.charactersByIds),
-      });
+      // Get current local storage array and remove certain character from it
+      const deleteFavorite = (id: string): void => {
+        removeFavoriteCharacterFromStorage(id);
 
-      // Delete favorite character method
-      const deleteFavorite = (id: string) => {
-        // Get current local storage array and remove certain character from it
-        const storage = String(localStorage.getItem(LocalStorage.FAVORITE_CHARACTERS));
-        let array = JSON.parse(storage);
+        const filteredData: Array<Character> = characters.data.filter(
+          (character: Character) => character.id !== id
+        );
 
-        let index = array.indexOf(id);
-        if (index !== -1) array.splice(index, 1);
-
-        localStorage.setItem(LocalStorage.FAVORITE_CHARACTERS, JSON.stringify(array));
-
-        // Making tricky calculations on which button to animate
-        let ids = document.getElementsByClassName("info-item id");
-        for (let i = 0; i <= ids.length - 1; i++) {
-          let chosen = ids[i].innerHTML;
-          if (chosen === id) break;
-        }
-
-        // TODO: Implement proper Character type and use it throughout the project
-        const filteredData = characters.data.filter((character: any) => character.id !== id);
         characters.data = computed(() => filteredData);
       };
 
@@ -88,47 +76,20 @@ export default defineComponent({
         deleteFavorite,
       };
     } else {
-      // Get current url search filter
       const searchFilter: string = getSearchedValueFromUrl();
 
-      // Show all characters
-      const { result, loading } = useQuery(charactersQuery, {
-        page: props.page,
-        filter: searchFilter,
-      });
+      const { data, loading } = getAllCharacters(props.page, searchFilter);
+      const characters = reactive({ data });
 
-      const characters = reactive({
-        data: useResult(result, null, (data) => data.characters.results),
-      });
+      // Get current local storage array and add new character to that
+      const saveFavorite = (id: string): void => {
+        saveFavoriteCharacterToStorage(id);
 
-      // Save favorite character method
-      const saveFavorite = (id: string) => {
-        // Get current local storage array and add new character to that
+        const favorites: Array<string> = getAllFavoriteCharactersFromStorage();
 
-        // Removing possibility of duplicates in a favorites array
-        const storage = String(localStorage.getItem(LocalStorage.FAVORITE_CHARACTERS));
-        let array = Array.from(new Set(JSON.parse(storage)));
-
-        array.push(id);
-        localStorage.setItem(
-          LocalStorage.FAVORITE_CHARACTERS,
-          JSON.stringify(Array.from(new Set(array)))
-        );
-
-        let buttonIdToChange = 0;
-
-        // Calculations on which button to animate
-        let ids = document.getElementsByClassName("info-item id");
-        for (let i = 0; i <= ids.length - 1; i++) {
-          let chosen = ids[i].innerHTML;
-          buttonIdToChange = i;
-          if (chosen === id) break;
+        if (favorites.includes(id)) {
+          makeCharacterButtonActiveById(id);
         }
-
-        // TODO: Make favorite characters to be already marked as favorite at the beginning
-        let fav = document.getElementsByClassName("is-favorite");
-        fav[buttonIdToChange].setAttribute("title", "Already favorite");
-        fav[buttonIdToChange].className += " is-active";
       };
 
       return {
