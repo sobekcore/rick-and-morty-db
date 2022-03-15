@@ -1,9 +1,12 @@
 import { shallowMount } from "@vue/test-utils";
+import { mockApolloQueryResults } from "./mocks/apollo.mock";
 
 import Header from "@/components/header.vue";
 import Navchar from "@/components/navchar.vue";
-import Character from "@/components/character.vue";
 import Error from "@/components/error.vue";
+
+// Mock some necessary methods from @vue/apollo-composable npm package
+jest.mock("@vue/apollo-composable", () => mockApolloQueryResults());
 
 describe("header.vue", () => {
   test("Header component exists", () => {
@@ -49,12 +52,6 @@ describe("navchar.vue", () => {
       props: { bool },
     });
     expect(typeof navchar.props("favorite")).toBe("boolean");
-  });
-});
-
-describe("character.vue", () => {
-  test("Character component exists", () => {
-    expect(Character);
   });
 });
 

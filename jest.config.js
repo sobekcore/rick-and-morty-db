@@ -1,5 +1,9 @@
 module.exports = {
+  verbose: true,
   preset: "@vue/cli-plugin-unit-jest/presets/typescript",
-  transform: { "^.+\\.vue$": "vue-jest" },
   testMatch: ["**/tests/unit/**/*.test.ts"],
+  transform: {
+    "^.+\\.vue$": "vue-jest",
+    "^.+\\.gql$": "jest-transform-graphql",
+  },
 };

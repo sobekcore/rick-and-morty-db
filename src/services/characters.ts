@@ -5,7 +5,7 @@ import { Characters } from "@/services/enums";
 import favoritesQuery from "@/graphql/favorites.query.gql";
 import charactersQuery from "@/graphql/characters.query.gql";
 
-// Custom character types MUST be placed within the same line divided by pipes
+// Character types values MUST be placed on new lines and be divided by pipes
 /* eslint-disable prettier/prettier */
 
 type status =
@@ -28,10 +28,9 @@ interface Character {
   status: status;
   gender: gender;
   species: string;
-  episode: Array<unknown>;
+  episode: Array<any>;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type response = { data: any; loading: Ref<boolean> };
 
 const getAllFavoriteCharacters = (favorites: Array<string>): response => {
