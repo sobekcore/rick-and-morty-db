@@ -45,7 +45,7 @@ export default defineComponent({
       const searchElement: HTMLElement | null = search.value;
 
       if (searchElement instanceof HTMLInputElement) {
-        window.location.search = Search.QUERY_SUFFIX + searchElement.value;
+        window.location.search = Search.QUERY_SUFFIX_FULL + searchElement.value;
       }
     };
 

@@ -1,5 +1,4 @@
 enum Search {
-  QUERY_SUFFIX = "q=",
   QUERY_SUFFIX_FULL = "?q=",
 }
 

@@ -1,14 +1,14 @@
 <template>
   <section>
     <ul id="keys-list">
-      <li>Photo</li>
-      <li>Character ID</li>
-      <li>Name</li>
-      <li>Gender</li>
-      <li>Species</li>
-      <li>Last Episode</li>
-      <li v-if="favorite">Remove from Favorites</li>
-      <li v-else>Add to Favorites</li>
+      <li class="photo">Photo</li>
+      <li class="id">Character ID</li>
+      <li class="name">Name</li>
+      <li class="gender">Gender</li>
+      <li class="species">Species</li>
+      <li class="last-episode">Last Episode</li>
+      <li v-if="favorite" class="favorites">Remove from Favorites</li>
+      <li v-else class="favorites">Add to Favorites</li>
     </ul>
   </section>
 </template>
