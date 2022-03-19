@@ -2,19 +2,19 @@ import { Time } from "@/services/enums";
 import { getTimeByUnit } from "@/services/time";
 
 const getCookieByName = (name: string): string => {
-  const split = document.cookie.split(`${name}=`);
+  const split: Array<string> = document.cookie.split(`${name}=`);
 
-  const lastElementRemoved = split.pop();
+  const lastElementRemoved: string | undefined = split.pop();
   if (!lastElementRemoved) return "";
 
   return String(lastElementRemoved.split(";").shift());
 };
 
 const saveCookieByName = (name: string, value: string, expire: number): void => {
-  const date = new Date();
+  const date: Date = new Date();
   date.setTime(date.getTime() + getTimeByUnit(Time.UNIT_DAY, expire));
 
-  const expires = `expires=${date.toUTCString()}`;
+  const expires: string = `expires=${date.toUTCString()}`;
   document.cookie = `${name}=${value}; ${expires};`;
 };
 

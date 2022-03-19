@@ -47,11 +47,11 @@ const getAllCharacters = (page: number, search: string): response => {
   return { data: characters, loading: loading };
 };
 
-const makeCharacterButtonActiveById = (id: string, boot = false): void => {
-  const character = document.querySelector(`[data-id="${id}"]`);
+const makeCharacterButtonActiveById = (id: string, boot: boolean = false): void => {
+  const character: Element | null = document.querySelector(`[data-id="${id}"]`);
 
   if (character instanceof HTMLElement) {
-    const favorite = character.querySelector(".is-favorite");
+    const favorite: Element | null = character.querySelector(".is-favorite");
 
     if (favorite instanceof HTMLElement) {
       favorite.setAttribute("title", "Already favorite");

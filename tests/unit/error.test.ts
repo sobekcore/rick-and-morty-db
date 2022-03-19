@@ -1,10 +1,11 @@
 import { shallowMount } from "@vue/test-utils";
+import { mock404ServerResponse } from "./mocks/response.mock";
 
 import Error from "@/components/error.vue";
 
-describe("error.vue", () => {
-  test("component should display props message", () => {
-    const message = "404: Not Found";
+describe("error.vue", (): void => {
+  test("component should display props message", (): void => {
+    const message: string = mock404ServerResponse();
 
     const component = shallowMount(Error, {
       props: {

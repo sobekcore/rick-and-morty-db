@@ -10,8 +10,8 @@ import CharacterComponent from "@/components/character.vue";
 // Mock some necessary methods from @vue/apollo-composable npm package
 jest.mock("@vue/apollo-composable", () => mockApolloQueryResults());
 
-describe("character.vue", () => {
-  test("component should propagate DOM with passed character data", () => {
+describe("character.vue", (): void => {
+  test("component should propagate DOM with passed character data", (): void => {
     const character: Character = generateSingleCharacter();
 
     const component = shallowMount(CharacterComponent, {
@@ -33,7 +33,7 @@ describe("character.vue", () => {
 
     /* Check for propagated Character image */ {
       const { element: image } = component.find(".info-item .photo");
-      const src = image.getAttribute("src");
+      const src: string = image.getAttribute("src");
       expect(src).toBe(character.image);
     }
 
@@ -49,12 +49,12 @@ describe("character.vue", () => {
 
     /* Check for propagated Character episode */ {
       const { element: episode } = component.find(".info-item.episode");
-      const lastEpisode = character.episode[character.episode.length - 1];
+      const lastEpisode: any = character.episode[character.episode.length - 1];
       expect(episode.textContent).toBe(lastEpisode.episode);
     }
   });
 
-  test("component should emit saveFavorite value", () => {
+  test("component should emit saveFavorite value", (): void => {
     const character: Character = generateSingleCharacter();
 
     const component = shallowMount(CharacterComponent, {
@@ -71,7 +71,7 @@ describe("character.vue", () => {
 
     /* Check for emitted value to exist and be truthy */ {
       const { element: button } = component.find(".is-favorite");
-      const clickEvent = new Event("click");
+      const clickEvent: Event = new Event("click");
       button.dispatchEvent(clickEvent);
 
       const emitted = component.emitted();
@@ -81,7 +81,7 @@ describe("character.vue", () => {
     }
   });
 
-  test("component should emit deleteFavorite value", () => {
+  test("component should emit deleteFavorite value", (): void => {
     const character: Character = generateSingleCharacter();
 
     const component = shallowMount(CharacterComponent, {
@@ -109,7 +109,7 @@ describe("character.vue", () => {
     }
   });
 
-  test("component should activate button on favorite character", () => {
+  test("component should activate button on favorite character", (): void => {
     const character: Character = generateSingleCharacter();
 
     saveFavoriteCharacterToStorage(character.id);

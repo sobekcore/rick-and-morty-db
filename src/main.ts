@@ -1,7 +1,7 @@
 import { createApp, h, provide } from "vue";
 import { ApolloClient, InMemoryCache } from "@apollo/client/core";
 import { DefaultApolloClient } from "@vue/apollo-composable";
-import App from "@/App.vue";
+import App from "@/app.vue";
 
 const apolloClient = new ApolloClient({
   uri: "https://rickandmortyapi.com/graphql",

@@ -7,8 +7,8 @@ import { Character } from "@/services/characters";
 
 import Header from "@/components/header.vue";
 
-describe("header.vue", () => {
-  test("component should show passed counter of characters", () => {
+describe("header.vue", (): void => {
+  test("component should show passed counter of characters", (): void => {
     const characters: Array<Character> = generateArrayOfCharacters();
 
     const component = shallowMount(Header, {
@@ -23,7 +23,7 @@ describe("header.vue", () => {
     }
   });
 
-  test("component should replace search value with url query", () => {
+  test("component should replace search value with url query", (): void => {
     // Make window.location accessible in the whole test
     makeWindowLocationAccessible();
 
@@ -47,7 +47,7 @@ describe("header.vue", () => {
     window.location.search = Search.QUERY_SUFFIX_FULL;
   });
 
-  test("component should change url when searching characters", () => {
+  test("component should change url when searching characters", (): void => {
     // Make window.location accessible in the whole test
     makeWindowLocationAccessible();
 

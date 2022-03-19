@@ -3,8 +3,8 @@ import { generateRandomBoolean } from "./mocks/random.mock";
 
 import Navbar from "@/components/navbar.vue";
 
-describe("navbar.vue", () => {
-  test("component should emit showFavorites value", () => {
+describe("navbar.vue", (): void => {
+  test("component should emit showFavorites value", (): void => {
     const component = shallowMount(Navbar, {
       props: {
         showFavorites: generateRandomBoolean(),
@@ -13,7 +13,7 @@ describe("navbar.vue", () => {
 
     /* Check if clicking on button emits showFavorites value */ {
       const { element: item } = component.find(".navbar-item");
-      const clickEvent = new Event("click");
+      const clickEvent: Event = new Event("click");
       item.dispatchEvent(clickEvent);
 
       const emitted = component.emitted();
@@ -23,7 +23,7 @@ describe("navbar.vue", () => {
     }
   });
 
-  test("component should make one of the buttons active", () => {
+  test("component should make one of the buttons active", (): void => {
     const component = shallowMount(Navbar, {
       props: {
         showFavorites: generateRandomBoolean(),

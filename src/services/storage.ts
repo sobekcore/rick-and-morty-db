@@ -1,13 +1,13 @@
 import { Storage } from "@/services/enums";
 
 const getAllFavoriteCharactersFromStorage = (): Array<string> => {
-  let properValuesAreSavedInStorage = false;
-  const storage = String(localStorage.getItem(Storage.FAVORITE_CHARACTERS));
-  const favorites = JSON.parse(storage);
+  let properValuesAreSavedInStorage: boolean = false;
+  const storage: string = String(localStorage.getItem(Storage.FAVORITE_CHARACTERS));
+  const favorites: any = JSON.parse(storage);
 
   if (favorites instanceof Array) {
-    const areAllElementsStrings = favorites.every((item: unknown) => typeof item === "string");
-    if (areAllElementsStrings) properValuesAreSavedInStorage = true;
+    const onlyStringItems: boolean = favorites.every((item: unknown) => typeof item === "string");
+    if (onlyStringItems) properValuesAreSavedInStorage = true;
   }
 
   return properValuesAreSavedInStorage ? favorites : [];
@@ -29,7 +29,7 @@ const saveFavoriteCharacterToStorage = (id: string): void => {
 const removeFavoriteCharacterFromStorage = (id: string): void => {
   const favorites: Array<string> = getAllFavoriteCharactersFromStorage();
 
-  const index = favorites.indexOf(id);
+  const index: number = favorites.indexOf(id);
   if (index !== -1) favorites.splice(index, 1);
 
   saveAllFavoriteCharactersToStorage(favorites);
@@ -37,7 +37,7 @@ const removeFavoriteCharacterFromStorage = (id: string): void => {
 
 const checkForFavoriteCharacterInStorage = (id: string): boolean => {
   const favorites: Array<string> = getAllFavoriteCharactersFromStorage();
-  const found = favorites.find((item: string) => item === id);
+  const found: string | undefined = favorites.find((item: string) => item === id);
 
   return found !== undefined;
 };
