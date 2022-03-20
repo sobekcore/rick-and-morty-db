@@ -2,4 +2,7 @@
 node_modules
 
 # build
-/dist
+dist
+
+# project settings
+.idea

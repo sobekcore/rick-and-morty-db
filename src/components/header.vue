@@ -1,31 +1,36 @@
 <template>
-  <header>
-    <a id="link" title="Rick &#38; Morty Database" href="/">
-      <img
-        id="logo"
-        role="banner"
-        alt="Rick &#38; Morty Database"
-        src="../assets/rick-and-morty.svg"
-      />
+  <header role="banner" class="header">
+    <a class="link" title="Rick &#38; Morty Database" href="/">
+      <img class="logo" src="@/assets/rick-and-morty.svg" alt="Rick &#38; Morty Database" />
     </a>
-    <section>
+    <section class="search-section">
       <input
-        id="url"
-        :value="searchFilterClean"
+        class="url"
+        ref="search"
+        :value="searchFilter"
         placeholder="Search for characters..."
-        v-on:keyup.enter="goToUrl()"
+        @keyup.enter="goToUrlWithQuery"
         autocomplete="off"
       />
-      <img id="search" title="Search" role="search" src="../assets/search.svg" @click="goToUrl()" />
+      <img
+        role="button"
+        class="search"
+        alt="Search"
+        title="Search"
+        src="@/assets/search.svg"
+        @click="goToUrlWithQuery"
+      />
     </section>
-    <p id="text">
-      Currently there are <span id="count">{{ count }}</span> characters to choose from.
+    <p class="text">
+      Currently there are <span class="count">{{ count }}</span> characters to choose from.
     </p>
   </header>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, Ref, ref } from "vue";
+import { Search } from "@/services/enums";
+import { getSearchedValueFromUrl } from "@/services/search";
 
 export default defineComponent({
   name: "Header",
@@ -34,55 +39,81 @@ export default defineComponent({
       type: Number,
     },
   },
-  methods: {
-    goToUrl: function () {
-      let url = (document.getElementById("url") as HTMLInputElement).value;
-      window.location.search = "=" + url;
-    },
-  },
   setup() {
-    // Using clean search filter & regex to replace placeholder
-    var searchFilter = window.location.search.substr(2);
-    var searchFilterClean = searchFilter.replace(/%20/g, " ");
+    const search: Ref<HTMLElement | null> = ref(null);
 
-    return { searchFilterClean };
+    const goToUrlWithQuery = (): void => {
+      const searchElement: HTMLElement | null = search.value;
+
+      if (searchElement instanceof HTMLInputElement) {
+        window.location.search = Search.QUERY_SUFFIX_FULL + searchElement.value;
+      }
+    };
+
+    // Using cleaned search filter to replace input value
+    const searchFilter: string = getSearchedValueFromUrl();
+
+    return {
+      search,
+      goToUrlWithQuery,
+      searchFilter,
+    };
   },
 });
 </script>
 
 <style scoped lang="scss">
-header {
+.header {
   display: grid;
   grid-template-columns: 380px 500px auto;
-  border-bottom: 2px solid $gray-100;
-  margin: 0;
-  padding: 0;
+  border-bottom: 2px solid $white-200;
   text-align: center;
   height: 140px;
 
-  #link {
+  @media (max-width: $desktop-breakpoint) {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .link {
     margin: auto;
     padding: 10px;
 
-    #logo {
+    .logo {
       height: 70px;
+
+      @media (max-width: $desktop-breakpoint) {
+        margin: 30px auto;
+      }
     }
   }
 
-  section {
-    border: 2px solid $gray-200;
-    height: 50px;
+  .search-section {
     display: flex;
     align-items: center;
+    border: 2px solid $white-300;
     border-radius: 14px;
     font-size: 24px;
     margin: auto 0;
+    height: 50px;
 
-    #url {
+    @media (max-width: $desktop-breakpoint) {
+      margin: 0 auto;
+      max-width: 550px;
+      width: 100%;
+    }
+
+    @media (max-width: $mobile-breakpoint) {
+      margin: 0 10vw;
+      max-width: initial;
+      width: auto;
+    }
+
+    .url {
       font: 18px "Poppins", sans-serif;
-      padding: 0px 15px;
-      color: $blue-400;
+      color: $brand-color;
       font-weight: 500;
+      padding: 0 14px;
       margin: 5px;
       width: 100%;
       height: 40px;
@@ -90,52 +121,31 @@ header {
       outline: none;
 
       &::placeholder {
-        color: $gray-200;
+        color: $white-300;
       }
     }
 
-    #search {
+    .search {
       height: 30px;
       margin-right: 10px;
       cursor: pointer;
     }
   }
 
-  #text {
+  .text {
     font: 21px "Poppins", sans-serif;
-    color: $gray-200;
+    color: $white-300;
     font-weight: 500;
     margin: auto 0;
     padding: 40px 70px;
 
-    #count {
-      color: $blue-400;
-    }
-  }
-
-  @media (max-width: 1319px) {
-    grid-template-columns: 1fr;
-    height: auto;
-
-    #link {
-      #logo {
-        margin: 30px auto;
-      }
-    }
-
-    section {
-      margin: 0 20vw;
-    }
-  }
-
-  @media (max-width: $mobile-breakpoint) {
-    section {
-      margin: 0 20px;
-    }
-
-    #text {
+    @media (max-width: $mobile-breakpoint) {
       padding: 40px 20px;
-      font-size: 19px;
+      font-size: 18px;
+    }
+
+    .count {
+      color: $brand-color;
     }
   }
 }

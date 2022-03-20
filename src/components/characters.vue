@@ -1,65 +1,44 @@
 <template>
   <!-- Displaying loading before data is fetched -->
-  <div class="load-wrapper" v-if="!characters && !favorite">
+  <div v-if="loading" class="load-wrapper">
     <h2 class="load">Loading characters...</h2>
   </div>
-  <section v-else>
-    <ul class="char-list">
-      <li class="char-item" v-for="character in characters" :key="character.id">
-        <ul class="info-list">
-          <CharInfo :character="character" />
-          <!-- Add to Favorites -->
-          <li class="info-item favorite">
-            <!-- Render different button depending if its favorite or not -->
-            <div v-if="favorite">
-              <img
-                title="Remove from favorites"
-                role="button"
-                class="already-favorite"
-                src="../assets/already-favorite.svg"
-                @click="deleteFavorite(character.id)"
-              />
-            </div>
-            <div v-else>
-              <img
-                title="Add to favorites"
-                role="button"
-                class="is-favorite"
-                src="../assets/favorite.svg"
-                @click="saveFavorite(character.id)"
-              />
-            </div>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </section>
 
-  <!-- Remove caption after animation -->
-  <h2 class="removed">Removed</h2>
+  <ul v-else class="char-list">
+    <li v-for="character in characters.data" :key="character.id" class="char-item">
+      <CharacterComponent
+        :character="character"
+        :favorite="favorite"
+        @saveFavorite="saveFavorite($event)"
+        @deleteFavorite="deleteFavorite($event)"
+      />
+    </li>
+  </ul>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { useQuery, useResult } from "@vue/apollo-composable";
+import { computed, defineComponent, reactive } from "vue";
+import { getSearchedValueFromUrl } from "@/services/search";
 
-// Import Components
-import CharInfo from "./char-info.vue";
+import {
+  Character,
+  getAllCharacters,
+  getAllFavoriteCharacters,
+  makeCharacterButtonActiveById,
+} from "@/services/characters";
 
-// Need to disable TypeScript and ESLint due to relative
-// import bug, not sure how to easily fix this without hacks.
+import {
+  getAllFavoriteCharactersFromStorage,
+  removeFavoriteCharacterFromStorage,
+  saveFavoriteCharacterToStorage,
+} from "@/services/storage";
 
-/* eslint-disable */
-// @ts-ignore
-import charactersQuery from "../graphql/characters.query.gql";
-// @ts-ignore
-import favoritesQuery from "../graphql/favorites.query.gql";
-/* eslint-enable */
+import CharacterComponent from "@/components/character.vue";
 
 export default defineComponent({
   name: "Characters",
   components: {
-    CharInfo,
+    CharacterComponent,
   },
   props: {
     page: {
@@ -71,230 +50,88 @@ export default defineComponent({
       default: false,
     },
   },
-  methods: {
-    saveFavorite: function (id: string) {
-      // Get current local storage array and add new character to that
+  setup(props) {
+    if (props.favorite) {
+      const favorites: Array<string> = getAllFavoriteCharactersFromStorage();
 
-      // Removing possibility of duplicates in a favorites array
-      // eslint-disable-next-line
-      let array = Array.from(new Set(JSON.parse(localStorage.getItem("rnmdb-favorite-characters")!)));
-      array.push(id);
-      localStorage.setItem("rnmdb-favorite-characters", JSON.stringify(Array.from(new Set(array))));
+      const { data, loading } = getAllFavoriteCharacters(favorites);
+      const characters = reactive({ data });
 
-      // Calculations on which button to animate
-      let ids = document.getElementsByClassName("info-item id");
-      for (var i = 0; i <= ids.length - 1; i++) {
-        var choosed = ids[i].innerHTML;
-
-        if (choosed == id) break;
-      }
-
-      let fav = document.getElementsByClassName("is-favorite");
-      fav[i].setAttribute("title", "Already favorite");
-      fav[i].className += " active";
-    },
-    deleteFavorite: function (id: string) {
       // Get current local storage array and remove certain character from it
-      // eslint-disable-next-line
-      let array = JSON.parse(localStorage.getItem("rnmdb-favorite-characters")!);
+      const deleteFavorite = (id: string): void => {
+        removeFavoriteCharacterFromStorage(id);
 
-      let index = array.indexOf(id);
-      if (index > -1) {
-        array.splice(index, 1);
-      }
+        const filteredData: Array<Character> = characters.data.filter(
+          (character: Character) => character.id !== id
+        );
 
-      localStorage.setItem("rnmdb-favorite-characters", JSON.stringify(array));
+        characters.data = computed(() => filteredData);
+      };
 
-      // Making tricky calculations on which button to animate
-      let ids = document.getElementsByClassName("info-item id");
-      for (var i = 0; i <= ids.length - 1; i++) {
-        var choosed = ids[i].innerHTML;
-
-        if (choosed == id) break;
-      }
-
-      let fav = document.getElementsByClassName("already-favorite");
-      fav[i].className += " delete";
-      let removed = document.getElementsByClassName("removed");
-      removed[0].className += " show";
-
-      setTimeout(() => {
-        location.reload();
-      }, 2100);
-    },
-  },
-  async setup(props) {
-    if (props.favorite == true) {
-      // Show favorite characters
-      // eslint-disable-next-line
-      let favorites = JSON.parse(localStorage.getItem("rnmdb-favorite-characters")!);
-
-      const { result } = useQuery(favoritesQuery, { favorite: favorites });
-      const characters = useResult(result, null, (data) => data.charactersByIds);
-
-      return { characters };
+      return {
+        characters,
+        loading,
+        deleteFavorite,
+      };
     } else {
-      // Get current url search filter
-      var searchFilter = window.location.search.substr(2);
-      var searchFilterClean = searchFilter.replaceAll("%20", " ");
+      const searchFilter: string = getSearchedValueFromUrl();
 
-      // Show all characters
-      const { result } = useQuery(charactersQuery, { page: props.page, filter: searchFilterClean });
-      const characters = useResult(result, null, (data) => data.characters.results);
+      const { data, loading } = getAllCharacters(props.page, searchFilter);
+      const characters = reactive({ data });
 
-      return { characters };
+      // Get current local storage array and add new character to that
+      const saveFavorite = (id: string): void => {
+        saveFavoriteCharacterToStorage(id);
+
+        const favorites: Array<string> = getAllFavoriteCharactersFromStorage();
+
+        if (favorites.includes(id)) {
+          makeCharacterButtonActiveById(id);
+        }
+      };
+
+      return {
+        characters,
+        loading,
+        saveFavorite,
+      };
     }
   },
 });
 </script>
 
 <style scoped lang="scss">
-section {
-  // -- Characters --
-  .char-list {
-    display: grid;
-    grid-template-columns: 1fr;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+.char-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 
-    .char-item {
-      border-bottom: 2px solid $gray-100;
-      background: white;
-      max-width: 100%;
-      margin: 3px 0;
-      padding: 4px 0;
+  .char-item {
+    border-bottom: 2px solid $white-200;
+    background: $white-50;
+    max-width: 100%;
+    padding: 10px 0;
 
-      .info-list {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        font: 18px "Poppins", sans-serif;
-        color: $gray-200;
-        list-style-type: none;
-        align-items: center;
-        text-align: center;
-        padding: 0;
-
-        .info-item {
-          // Diferent styling on favorite buttons depending on location
-          .is-favorite,
-          .already-favorite {
-            height: 46px;
-            min-width: 47px;
-            padding: 10px;
-            border: 2px solid $blue-400;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.2s transform;
-          }
-
-          .is-favorite.active {
-            animation: 0.9s fillBlue;
-            animation-fill-mode: forwards;
-          }
-
-          @keyframes fillBlue {
-            0% {
-              background: white;
-              content: url("../assets/favorite.svg");
-            }
-            100% {
-              background: $blue-400;
-              content: url("../assets/already-favorite.svg");
-            }
-          }
-
-          .already-favorite {
-            background: $blue-400;
-          }
-
-          .already-favorite.delete {
-            transition: 4s transform;
-            margin-left: -24px;
-            margin-top: -27px;
-            position: fixed;
-            transform: scale(600);
-            animation-timing-function: ease-in;
-            pointer-events: none;
-            z-index: 99;
-          }
-
-          .is-favorite:hover,
-          .already-favorite:hover {
-            transform: scale(1.25);
-          }
-        }
-      }
-
-      @media (max-width: $mobile-breakpoint) {
-        margin: 0;
-        padding: 12px 0;
-
-        .info-list {
-          grid-template-columns: 1fr;
-
-          .info-item.favorite::before {
-            content: "Favorite?";
-            line-height: 34px;
-            display: block;
-            margin-top: 10px;
-          }
-        }
-      }
+    @media (max-width: $mobile-breakpoint) {
+      padding: 12px 0;
     }
   }
 }
 
-// -- Loading --
 .load-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 2px solid $gray-100;
-  height: 100px;
+  border-bottom: 2px solid $white-200;
+  height: $single-item-height;
   width: 100%;
 
   .load {
-    font: 19px "Poppins", sans-serif;
-    color: $gray-200;
+    font: 18px "Poppins", sans-serif;
+    color: $white-300;
     padding: 0;
-  }
-}
-
-// -- Removing --
-.removed {
-  display: none;
-  opacity: 0;
-  margin: 0;
-}
-
-.removed.show {
-  font: 44px "Poppins", sans-serif;
-  color: #d14a4a;
-  background: white;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-weight: 500;
-  display: block;
-  position: fixed;
-  z-index: 100;
-  left: 50%;
-  top: 50%;
-  user-select: none;
-  transform: translate(-50%, -50%);
-  animation: 2.4s fadeIn;
-  animation-direction: forwards;
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  33% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
   }
 }
 </style>
