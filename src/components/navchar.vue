@@ -1,6 +1,6 @@
 <template>
-  <section>
-    <ul id="keys-list">
+  <section class="navchar">
+    <ul class="navchar-list">
       <li class="photo">Photo</li>
       <li class="id">Character ID</li>
       <li class="name">Name</li>
@@ -28,20 +28,22 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-#keys-list {
-  font: 18px "Poppins", sans-serif;
-  font-weight: 500;
-  list-style-type: none;
-  color: $gray-200;
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  background: $gray-100;
-  text-align: center;
-  padding: 12px 0;
-  margin: 0 0 3px 0;
+.navchar {
+  .navchar-list {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    font: 18px "Poppins", sans-serif;
+    font-weight: 500;
+    color: $white-300;
+    text-align: center;
+    list-style-type: none;
+    background: $white-200;
+    padding: 12px 0;
+    margin: 0;
 
-  @media (max-width: $mobile-breakpoint) {
-    display: none;
+    @media (max-width: $mobile-breakpoint) {
+      display: none;
+    }
   }
 }
 </style>

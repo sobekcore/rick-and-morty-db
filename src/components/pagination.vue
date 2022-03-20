@@ -73,7 +73,7 @@
   </nav>
 
   <!-- Margin for a pagination fixed div -->
-  <div id="pagination-margin" v-if="!showFavorites"></div>
+  <div class="pagination-margin" v-if="!showFavorites"></div>
 </template>
 
 <script lang="ts">
@@ -123,9 +123,9 @@ export default defineComponent({
   bottom: 0;
   width: 100%;
   height: auto;
-  background: white;
-  border-top: 2px solid $gray-100;
-  padding: 24px 0;
+  background: $white-50;
+  border-top: 2px solid $white-200;
+  padding: 22.5px 0;
 
   .show-more {
     display: none;
@@ -133,15 +133,13 @@ export default defineComponent({
     @media (max-width: $mobile-breakpoint) {
       display: block;
       font: 21px "Poppins", sans-serif;
-      color: $blue-400;
-      padding: 15px 0;
-      width: 100%;
+      color: $brand-color;
       background: none;
       border: none;
       outline: none;
-      margin-top: -24px;
-      margin-bottom: -24px;
-      cursor: pointer;
+      width: 100%;
+      margin: -24px 0;
+      padding: 15px 0;
 
       &:hover {
         cursor: pointer;
@@ -153,50 +151,6 @@ export default defineComponent({
     list-style-type: none;
     margin: 0 0 0 60px;
     padding: 0;
-
-    .page-section {
-      display: inline-block;
-      user-select: none;
-
-      .page {
-        margin: 5px;
-        padding: 8px 0;
-        border-radius: 10px;
-        border: 2px solid $gray-200;
-        font: 18px "Poppins", sans-serif;
-        font-weight: 500;
-        color: $gray-200;
-        text-align: center;
-        width: 48px;
-        transition: 0.18s box-shadow, 0.25s border;
-      }
-
-      .page:not(.disabled):hover {
-        box-shadow: 0 0 12px $blue-400;
-        border: 2px solid $blue-400;
-        cursor: pointer;
-      }
-
-      .page.special {
-        .pointer {
-          transform: translateY(-10%);
-        }
-
-        .pointer-flip {
-          transform: translateY(-10%) rotate(-180deg);
-        }
-      }
-
-      .page.is-active {
-        background: $blue-400;
-        border: 2px solid $blue-400;
-        color: white;
-      }
-
-      .page.disabled {
-        filter: brightness(85%) opacity(45%);
-      }
-    }
 
     @media (max-width: $tablet-breakpoint) {
       text-align: center;
@@ -211,15 +165,59 @@ export default defineComponent({
         margin-top: 24px;
       }
     }
+
+    .page-section {
+      display: inline-block;
+      user-select: none;
+
+      .page {
+        margin: 5px;
+        padding: 8px 0;
+        border-radius: 10px;
+        border: 2px solid $white-300;
+        font: 18px "Poppins", sans-serif;
+        font-weight: 500;
+        color: $white-300;
+        text-align: center;
+        width: 48px;
+        transition: 0.18s box-shadow, 0.25s border;
+
+        &:not(.disabled):hover {
+          box-shadow: 0 0 12px $brand-color;
+          border: 2px solid $brand-color;
+          cursor: pointer;
+        }
+
+        &.special {
+          .pointer {
+            transform: translateY(-10%);
+          }
+
+          .pointer-flip {
+            transform: translateY(-10%) rotate(-180deg);
+          }
+        }
+
+        &.is-active {
+          background: $brand-color;
+          border: 2px solid $brand-color;
+          color: $white-50;
+        }
+
+        &.disabled {
+          filter: brightness(85%) opacity(40%);
+        }
+      }
+    }
   }
 }
 
-#pagination-margin {
-  height: 102px;
+.pagination-margin {
+  height: $single-item-height;
   width: 100%;
 
   @media (max-width: $mobile-breakpoint) {
-    height: 57px;
+    height: 58px;
   }
 }
 </style>

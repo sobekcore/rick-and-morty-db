@@ -1,21 +1,19 @@
 <template>
   <!-- Displaying loading before data is fetched -->
-  <div class="load-wrapper" v-if="loading">
+  <div v-if="loading" class="load-wrapper">
     <h2 class="load">Loading characters...</h2>
   </div>
 
-  <section v-else>
-    <ul class="char-list">
-      <li class="char-item" v-for="character in characters.data" :key="character.id">
-        <CharacterComponent
-          :character="character"
-          :favorite="favorite"
-          @saveFavorite="saveFavorite($event)"
-          @deleteFavorite="deleteFavorite($event)"
-        />
-      </li>
-    </ul>
-  </section>
+  <ul v-else class="char-list">
+    <li v-for="character in characters.data" :key="character.id" class="char-item">
+      <CharacterComponent
+        :character="character"
+        :favorite="favorite"
+        @saveFavorite="saveFavorite($event)"
+        @deleteFavorite="deleteFavorite($event)"
+      />
+    </li>
+  </ul>
 </template>
 
 <script lang="ts">
@@ -111,30 +109,13 @@ export default defineComponent({
   margin: 0;
 
   .char-item {
-    border-bottom: 2px solid $gray-100;
-    background: white;
+    border-bottom: 2px solid $white-200;
+    background: $white-50;
     max-width: 100%;
-    margin: 3px 0;
-    padding: 4px 0;
-
-    .info-list {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      font: 18px "Poppins", sans-serif;
-      color: $gray-200;
-      list-style-type: none;
-      align-items: center;
-      text-align: center;
-      padding: 0;
-    }
+    padding: 10px 0;
 
     @media (max-width: $mobile-breakpoint) {
-      margin: 0;
       padding: 12px 0;
-
-      .info-list {
-        grid-template-columns: 1fr;
-      }
     }
   }
 }
@@ -143,13 +124,13 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 2px solid $gray-100;
-  height: 100px;
+  border-bottom: 2px solid $white-200;
+  height: $single-item-height;
   width: 100%;
 
   .load {
-    font: 19px "Poppins", sans-serif;
-    color: $gray-200;
+    font: 18px "Poppins", sans-serif;
+    color: $white-300;
     padding: 0;
   }
 }

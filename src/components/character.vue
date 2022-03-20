@@ -1,14 +1,14 @@
 <template>
   <ul class="info-list" :data-id="character.id">
     <!-- Photo & Status -->
-    <li v-if="character.status === Enums.Characters.STATUS_ALIVE" class="info-item">
+    <li v-if="character.status === Enums.Characters.STATUS_ALIVE" class="info-item image">
       <img alt="Character Image" class="photo" :src="character.image" />
     </li>
-    <li v-else-if="character.status === Enums.Characters.STATUS_DEAD" class="info-item">
+    <li v-else-if="character.status === Enums.Characters.STATUS_DEAD" class="info-item image">
       <img alt="Character Image" class="photo grayed" :src="character.image" />
       <img alt="Ribbon" class="ribbon" src="@/assets/ribbon.svg" />
     </li>
-    <li v-else-if="character.status === Enums.Characters.TYPE_UNKNOWN" class="info-item">
+    <li v-else-if="character.status === Enums.Characters.TYPE_UNKNOWN" class="info-item image">
       <img alt="Character Image" class="photo grayed" :src="character.image" />
     </li>
 
@@ -124,115 +124,142 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-// Changing offsets of gender svg's
-.info-item.gender {
-  img {
-    transform: translate(-3px, 5px);
+.info-list {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  font: 18px "Poppins", sans-serif;
+  color: $white-300;
+  list-style-type: none;
+  align-items: center;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+
+  @media (max-width: $mobile-breakpoint) {
+    grid-template-columns: 1fr;
   }
 
-  .genderless {
-    transform: translate(-5px, 1px);
-    margin-left: 5px;
-  }
+  .info-item {
+    &.image {
+      position: relative;
 
-  .unknown {
-    transform: translate(-5px, -5px);
-    margin-left: 5px;
-  }
-}
+      .photo {
+        display: block;
+        border-radius: 10px;
+        height: 80px;
+        margin: auto;
+      }
 
-// Characters details
-.info-item {
-  .photo {
-    height: 80px;
-    border-radius: 10px;
-  }
+      .ribbon {
+        position: absolute;
+        transform: translateX(28px);
+        top: -3px;
+      }
+    }
 
-  .ribbon {
-    position: absolute;
-    transform: translate(-12px, -3px);
-  }
+    &.gender {
+      img {
+        transform: translate(-3px, 5px);
+      }
 
-  // Different styling on favorite buttons depending on location
-  .is-favorite,
-  .already-favorite {
-    height: 46px;
-    min-width: 47px;
-    padding: 10px;
-    border: 2px solid $blue-400;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.2s transform;
-  }
+      .genderless {
+        transform: translate(-5px, 1px);
+        margin-left: 5px;
+      }
 
-  .is-favorite.is-active {
-    animation: 0.9s fillBlue;
-    animation-fill-mode: forwards;
-  }
+      .unknown {
+        transform: translate(-5px, -5px);
+        margin-left: 5px;
+      }
+    }
 
-  .is-favorite.is-active-on-boot {
-    animation: 0s fillBlue;
-    animation-fill-mode: forwards;
-  }
+    .is-favorite,
+    .already-favorite {
+      height: 46px;
+      min-width: 47px;
+      padding: 10px;
+      border: 2px solid $brand-color;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s transform;
+    }
 
-  .already-favorite {
-    background: $blue-400;
-  }
+    .is-favorite {
+      background: $white-50;
+    }
 
-  .is-favorite:hover,
-  .already-favorite:hover {
-    transform: scale(1.25);
-  }
-}
+    .already-favorite {
+      background: $brand-color;
+    }
 
-@media (max-width: $mobile-breakpoint) {
-  .info-item.id::before {
-    content: "#";
-  }
+    .is-favorite.is-active {
+      animation: 0.9s fillBlue;
+      animation-fill-mode: forwards;
+    }
 
-  .info-item.id {
-    order: -2;
-    font-size: 23px;
-    margin-left: 12px;
-    display: flex;
-    width: auto;
-  }
+    .is-favorite.is-active-on-boot {
+      animation: 0s fillBlue;
+      animation-fill-mode: forwards;
+    }
 
-  .info-item.name {
-    order: -1;
-    margin: -33px 80px 12px;
-    font-size: 21px;
-    word-wrap: break-word;
-  }
+    .is-favorite:hover,
+    .already-favorite:hover {
+      transform: scale(1.25);
+    }
 
-  // Adding keys to values on mobile for clarity
-  .info-item.gender::before {
-    content: "Gender: ";
-  }
+    // Mobile replacements for hidden Navchar component
+    @media (max-width: $mobile-breakpoint) {
+      &.id::before {
+        content: "#";
+      }
 
-  .info-item.species::before {
-    content: "Species: ";
-  }
+      &.image {
+        margin: 10px 0;
+      }
 
-  .info-item.episode::before {
-    content: "Last episode: ";
-  }
+      &.id {
+        order: -2;
+        font-size: 23px;
+        margin-left: 12px;
+        display: flex;
+        width: auto;
+      }
 
-  .info-item.favorite::before {
-    content: "Favorite?";
-    line-height: 34px;
-    display: block;
-    margin-top: 10px;
+      &.name {
+        order: -1;
+        font-size: 21px;
+        margin: -33px 80px 0;
+        word-wrap: break-word;
+      }
+
+      &.gender::before {
+        content: "Gender: ";
+      }
+
+      &.species::before {
+        content: "Species: ";
+      }
+
+      &.episode::before {
+        content: "Last episode: ";
+      }
+
+      &.favorite::before {
+        content: "Favorite?";
+        margin: 10px 0 6px;
+        display: block;
+      }
+    }
   }
 }
 
 @keyframes fillBlue {
   0% {
-    background: white;
+    background: $white-50;
     content: url("~@/assets/favorite.svg");
   }
   100% {
-    background: $blue-400;
+    background: $brand-color;
     content: url("~@/assets/already-favorite.svg");
   }
 }

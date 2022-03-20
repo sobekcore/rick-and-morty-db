@@ -42,41 +42,47 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .navbar {
+  margin: 18px 44px;
+
+  @media (max-width: $mobile-breakpoint) {
+    border-bottom: 2px solid $white-200;
+    padding-bottom: 21px;
+    margin: 18px 0 0;
+  }
+
   .navbar-list {
+    display: flex;
+    flex-direction: row;
     font: 18px "Poppins", sans-serif;
     font-weight: 500;
     list-style-type: none;
-    color: $gray-200;
-    margin: 18px 44px;
-    display: flex;
+    color: $white-300;
     padding: 0;
+    margin: 0;
+
+    @media (max-width: $mobile-breakpoint) {
+      flex-direction: column;
+      align-items: center;
+    }
 
     .navbar-item {
       margin: 7px 21px;
       padding: 3px 9px;
       cursor: pointer;
       transition: 0.25s text-shadow, 0.25s color;
-    }
 
-    .navbar-item:hover {
-      text-shadow: 0 0 16px $blue-400;
-      color: $blue-400;
-    }
-
-    .navbar-item.is-active {
-      color: $blue-400;
-      border-bottom: 4px solid $blue-400;
-    }
-
-    @media (max-width: $mobile-breakpoint) {
-      flex-direction: column;
-      align-items: center;
-      border-bottom: 2px solid $gray-100;
-      padding-bottom: 21px;
-      margin: 18px 0 0 0;
-
-      .navbar-item {
+      @media (max-width: $mobile-breakpoint) {
         margin: 7px 0;
+      }
+
+      &:hover {
+        text-shadow: 0 0 16px $brand-color;
+        color: $brand-color;
+      }
+
+      &.is-active {
+        color: $brand-color;
+        border-bottom: 4px solid $brand-color;
       }
     }
   }

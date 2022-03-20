@@ -14,7 +14,7 @@ describe("error.vue", (): void => {
     });
 
     /* Check if element textContent is matching actual error message */ {
-      const { element: description } = component.find("#error-desc");
+      const { element: description } = component.find(".error-desc");
       expect(description.textContent).toBe(message);
     }
   });

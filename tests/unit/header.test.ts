@@ -18,7 +18,7 @@ describe("header.vue", (): void => {
     });
 
     /* Check if passed count prop is appended to element */ {
-      const { element: count } = component.find("#count");
+      const { element: count } = component.find(".count");
       expect(count.textContent).toBe(String(characters.length));
     }
   });
@@ -39,7 +39,7 @@ describe("header.vue", (): void => {
     });
 
     /* Check if current URL query is embedded into search bar */ {
-      const { element: url } = component.find("#url");
+      const { element: url } = component.find(".url");
       expect(url.value).toBe(character.name);
     }
 
@@ -63,10 +63,10 @@ describe("header.vue", (): void => {
     });
 
     /* Check if window.location.search changes when searching */ {
-      const { element: url } = component.find("#url");
+      const { element: url } = component.find(".url");
       url.setAttribute("value", character.name);
 
-      const { element: search } = component.find("#search");
+      const { element: search } = component.find(".search");
       const clickEvent = new Event("click");
       search.dispatchEvent(clickEvent);
 
