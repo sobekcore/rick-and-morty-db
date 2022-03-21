@@ -131,9 +131,8 @@ export default defineComponent({
     display: none;
 
     @media (max-width: $mobile-breakpoint) {
+      @include default-big-font($brand-color);
       display: block;
-      font: 21px "Poppins", sans-serif;
-      color: $brand-color;
       background: none;
       border: none;
       outline: none;
@@ -171,13 +170,12 @@ export default defineComponent({
       user-select: none;
 
       .page {
+        @include default-small-font;
         margin: 5px;
         padding: 8px 0;
         border-radius: 10px;
         border: 2px solid $white-300;
-        font: 18px "Poppins", sans-serif;
         font-weight: 500;
-        color: $white-300;
         text-align: center;
         width: 48px;
         transition: 0.18s box-shadow, 0.25s border;

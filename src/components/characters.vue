@@ -1,6 +1,6 @@
 <template>
   <!-- Displaying loading before data is fetched -->
-  <div v-if="loading" class="load-wrapper">
+  <div v-if="loading" class="load-wrapper centered">
     <h2 class="load">Loading characters...</h2>
   </div>
 
@@ -121,16 +121,12 @@ export default defineComponent({
 }
 
 .load-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   border-bottom: 2px solid $white-200;
   height: $single-item-height;
   width: 100%;
 
   .load {
-    font: 18px "Poppins", sans-serif;
-    color: $white-300;
+    @include default-small-font;
     padding: 0;
   }
 }

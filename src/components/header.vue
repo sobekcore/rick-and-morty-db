@@ -110,8 +110,7 @@ export default defineComponent({
     }
 
     .url {
-      font: 18px "Poppins", sans-serif;
-      color: $brand-color;
+      @include default-small-font($brand-color);
       font-weight: 500;
       padding: 0 14px;
       margin: 5px;
@@ -133,8 +132,7 @@ export default defineComponent({
   }
 
   .text {
-    font: 21px "Poppins", sans-serif;
-    color: $white-300;
+    @include default-big-font;
     font-weight: 500;
     margin: auto 0;
     padding: 40px 70px;
