@@ -30,11 +30,10 @@ export default defineComponent({
 <style scoped lang="scss">
 .navchar {
   .navchar-list {
+    @include default-small-font;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    font: 18px "Poppins", sans-serif;
     font-weight: 500;
-    color: $white-300;
     text-align: center;
     list-style-type: none;
     background: $white-200;

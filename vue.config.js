@@ -13,6 +13,7 @@ module.exports = {
         prependData: `
           @import "@/styles/variables.scss";
           @import "@/styles/globals.scss";
+          @import "@/styles/mixins.scss";
           @import "@/styles/helpers.scss";
         `,
       },

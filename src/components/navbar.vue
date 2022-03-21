@@ -51,12 +51,11 @@ export default defineComponent({
   }
 
   .navbar-list {
+    @include default-small-font;
     display: flex;
     flex-direction: row;
-    font: 18px "Poppins", sans-serif;
     font-weight: 500;
     list-style-type: none;
-    color: $white-300;
     padding: 0;
     margin: 0;
 

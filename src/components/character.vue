@@ -1,15 +1,17 @@
 <template>
   <ul class="info-list" :data-id="character.id">
     <!-- Photo & Status -->
-    <li v-if="character.status === Enums.Characters.STATUS_ALIVE" class="info-item image">
-      <img alt="Character Image" class="photo" :src="character.image" />
-    </li>
-    <li v-else-if="character.status === Enums.Characters.STATUS_DEAD" class="info-item image">
-      <img alt="Character Image" class="photo grayed" :src="character.image" />
-      <img alt="Ribbon" class="ribbon" src="@/assets/ribbon.svg" />
-    </li>
-    <li v-else-if="character.status === Enums.Characters.TYPE_UNKNOWN" class="info-item image">
-      <img alt="Character Image" class="photo grayed" :src="character.image" />
+    <li class="info-item image centered">
+      <div v-if="character.status === Enums.Characters.STATUS_ALIVE" class="photo-wrapper">
+        <img alt="Character Image" class="photo" :src="character.image" />
+      </div>
+      <div v-else-if="character.status === Enums.Characters.STATUS_DEAD" class="photo-wrapper">
+        <img alt="Character Image" class="photo grayed" :src="character.image" />
+        <img alt="Ribbon" class="ribbon" src="@/assets/ribbon.svg" />
+      </div>
+      <div v-else-if="character.status === Enums.Characters.TYPE_UNKNOWN" class="photo-wrapper">
+        <img alt="Character Image" class="photo grayed" :src="character.image" />
+      </div>
     </li>
 
     <!-- Character ID -->
@@ -51,27 +53,25 @@
     </li>
 
     <!-- Add to Favorites -->
-    <li class="info-item favorite">
-      <div v-if="favorite">
-        <img
-          alt="Remove from favorites"
-          title="Remove from favorites"
-          role="button"
-          class="already-favorite"
-          src="@/assets/already-favorite.svg"
-          @click="deleteFavorite(character.id)"
-        />
-      </div>
-      <div v-else>
-        <img
-          alt="Add to favorites"
-          title="Add to favorites"
-          role="button"
-          class="is-favorite"
-          src="@/assets/favorite.svg"
-          @click="saveFavorite(character.id)"
-        />
-      </div>
+    <li class="info-item favorite centered">
+      <img
+        v-if="favorite"
+        alt="Remove from favorites"
+        title="Remove from favorites"
+        role="button"
+        class="already-favorite"
+        src="@/assets/already-favorite.svg"
+        @click="deleteFavorite(character.id)"
+      />
+      <img
+        v-else
+        alt="Add to favorites"
+        title="Add to favorites"
+        role="button"
+        class="is-favorite"
+        src="@/assets/favorite.svg"
+        @click="saveFavorite(character.id)"
+      />
     </li>
   </ul>
 </template>
@@ -125,10 +125,9 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .info-list {
+  @include default-small-font;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  font: 18px "Poppins", sans-serif;
-  color: $white-300;
   list-style-type: none;
   align-items: center;
   text-align: center;
@@ -141,19 +140,20 @@ export default defineComponent({
 
   .info-item {
     &.image {
-      position: relative;
+      .photo-wrapper {
+        position: relative;
 
-      .photo {
-        display: block;
-        border-radius: 10px;
-        height: 80px;
-        margin: auto;
-      }
+        .photo {
+          display: block;
+          border-radius: 10px;
+          height: 80px;
+        }
 
-      .ribbon {
-        position: absolute;
-        transform: translateX(28px);
-        top: -3px;
+        .ribbon {
+          position: absolute;
+          right: -5px;
+          top: -3px;
+        }
       }
     }
 
@@ -173,46 +173,44 @@ export default defineComponent({
       }
     }
 
-    .is-favorite,
-    .already-favorite {
-      height: 46px;
-      min-width: 47px;
-      padding: 10px;
-      border: 2px solid $brand-color;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.2s transform;
-    }
+    &.favorite {
+      .is-favorite,
+      .already-favorite {
+        height: 46px;
+        min-width: 47px;
+        padding: 10px;
+        border: 2px solid $brand-color;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.2s transform;
+      }
 
-    .is-favorite {
-      background: $white-50;
-    }
+      .is-favorite {
+        background: $white-50;
+      }
 
-    .already-favorite {
-      background: $brand-color;
-    }
+      .already-favorite {
+        background: $brand-color;
+      }
 
-    .is-favorite.is-active {
-      animation: 0.9s fillBlue;
-      animation-fill-mode: forwards;
-    }
+      .is-favorite.is-active {
+        animation: 0.9s fill-blue;
+        animation-fill-mode: forwards;
+      }
 
-    .is-favorite.is-active-on-boot {
-      animation: 0s fillBlue;
-      animation-fill-mode: forwards;
-    }
+      .is-favorite.is-active-on-boot {
+        animation: 0s fill-blue;
+        animation-fill-mode: forwards;
+      }
 
-    .is-favorite:hover,
-    .already-favorite:hover {
-      transform: scale(1.25);
+      .is-favorite:hover,
+      .already-favorite:hover {
+        transform: scale(1.25);
+      }
     }
 
     // Mobile replacements for hidden Navchar component
     @media (max-width: $mobile-breakpoint) {
-      &.id::before {
-        content: "#";
-      }
-
       &.image {
         margin: 10px 0;
       }
@@ -223,6 +221,10 @@ export default defineComponent({
         margin-left: 12px;
         display: flex;
         width: auto;
+
+        &::before {
+          content: "#";
+        }
       }
 
       &.name {
@@ -244,16 +246,20 @@ export default defineComponent({
         content: "Last episode: ";
       }
 
-      &.favorite::before {
-        content: "Favorite?";
-        margin: 10px 0 6px;
+      &.favorite {
         display: block;
+
+        &::before {
+          content: "Favorite?";
+          margin: 10px 0 6px;
+          display: block;
+        }
       }
     }
   }
 }
 
-@keyframes fillBlue {
+@keyframes fill-blue {
   0% {
     background: $white-50;
     content: url("~@/assets/favorite.svg");

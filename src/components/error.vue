@@ -29,7 +29,7 @@ export default defineComponent({
   opacity: 0;
   text-align: center;
   transform: translate(-50%, -50%);
-  animation: 1s fadeIn;
+  animation: 1s fade-in;
   animation-fill-mode: forwards;
 
   .error-logo {
@@ -38,19 +38,17 @@ export default defineComponent({
   }
 
   .error-desc {
-    font: 21px "Poppins", sans-serif;
+    @include default-big-font;
     margin-bottom: 24px;
     font-weight: 500;
-    color: $white-300;
   }
 
   .go-back {
+    @include default-small-font($brand-color);
     padding: 9px 18px;
     border-radius: 14px;
     border: 2px solid $brand-color;
-    font: 18px "Poppins", sans-serif;
     font-weight: 500;
-    color: $brand-color;
     background: $white-50;
     outline: none;
     transition: 0.2s box-shadow;
@@ -62,7 +60,7 @@ export default defineComponent({
   }
 }
 
-@keyframes fadeIn {
+@keyframes fade-in {
   0% {
     opacity: 0;
   }

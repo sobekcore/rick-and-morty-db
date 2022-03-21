@@ -1,0 +1,9 @@
+@mixin default-small-font($color: $white-300) {
+  font: 18px "Poppins", sans-serif;
+  color: $color;
+}
+
+@mixin default-big-font($color: $white-300) {
+  font: 21px "Poppins", sans-serif;
+  color: $color;
+}
